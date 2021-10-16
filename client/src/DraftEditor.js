@@ -1,7 +1,8 @@
 import React from "react"
-import Injector from "lib/Injector"
+import {loadComponent} from "lib/Injector"
 import {useNode} from "@craftjs/core"
-import {Editor, EditorState, RichUtils} from "draft-js"
+import {DefaultDraftBlockRenderMap, Editor, EditorState, getDefaultKeyBinding, RichUtils} from "draft-js"
+import Immutable from "immutable"
 import "draft-js/dist/Draft.css"
 import styles from "./DraftEditor.module.scss"
 
@@ -16,26 +17,35 @@ const INLINE_STYLES = [
 	{tooltip: "Bold", styleName: "BOLD", iconName: "mdiFormatBold"},
 	{tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic"},
 	{tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline"},
+	{tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant"},
 	{title: "Test", styleName: "MYCUSTOMTEST", color: "red", activeColor: "purple"},
 	// {label: "Monospace", style: "CODE", iconName: "iconName"},
 ]
 // TODO this should be configurable by a silverstripe app
 const BLOCK_TYPES = [
-	{title: "Paragraph", label: "P", value: "unstyled"},
-	{title: "Heading 1", label: "H1", value: "header-one"},
-	{title: "Heading 2", label: "H2", value: "header-two"},
-	{title: "Heading 3", label: "H3", value: "header-three"},
-	{title: "Heading 4", label: "H4", value: "header-four"},
-	{title: "Heading 5", label: "H5", value: "header-five"},
-	{title: "Heading 6", label: "H6", value: "header-six"},
-	{title: "Blockquote", label: "Blockquote", value: "blockquote"},
-	{title: "Bullet list", label: "UL", value: "unordered-list-item"},
-	{title: "Numbered list", label: "OL", value: "ordered-list-item"},
-	{title: "Code", label: "Code Block", value: "code-block"},
+	{iconName: "mdiText", title: "Paragraph", value: "unstyled"},
+	{iconName: "mdiFormatHeader1", title: "Heading 1", value: "header-one"},
+	{iconName: "mdiFormatHeader2", title: "Heading 2", value: "header-two"},
+	{iconName: "mdiFormatHeader3", title: "Heading 3", value: "header-three"},
+	{iconName: "mdiFormatHeader4", title: "Heading 4", value: "header-four"},
+	{iconName: "mdiFormatHeader5", title: "Heading 5", value: "header-five"},
+	{iconName: "mdiFormatHeader6", title: "Heading 6", value: "header-six"},
+	{iconName: "mdiFormatQuoteClose", title: "Blockquote", value: "blockquote"},
+	{iconName: "mdiFormatListBulleted", title: "Bullet list", value: "unordered-list-item"},
+	{iconName: "mdiFormatListNumbered", title: "Numbered list", value: "ordered-list-item"},
+	{iconName: "mdiCodeBraces", title: "Code", value: "code-block"},
 ]
+const _blockRenderMap = Immutable.Map({
+	"unstyled": {
+		element: "p",
+		aliasedElements: ["div"],
+	},
+})
+const blockRenderMap = DefaultDraftBlockRenderMap.merge(_blockRenderMap)
+
 
 const BlockStyleControls = ({editorState, setEditorState}) => {
-	const ToolbarSelect = Injector.component.get("PageBuilder/ToolbarSelect")
+	const ToolbarSelect = loadComponent("PageBuilder/ToolbarSelect")
 	const blockType = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType()
 	const setBlockType = React.useCallback((newBlockType) => {
 		if (blockType !== newBlockType) {
@@ -46,12 +56,12 @@ const BlockStyleControls = ({editorState, setEditorState}) => {
 		}
 	}, [blockType])
 	return (
-		<ToolbarSelect value={blockType} onChange={setBlockType} options={BLOCK_TYPES} />
+		<ToolbarSelect showSelectedTitle={false} value={blockType} onChange={setBlockType} options={BLOCK_TYPES} />
 	)
 }
 
 function InlineStyleControlsButton({styleName, setEditorState, active, color, background, activeColor, activeBackground, ...props}) {
-	const ToolbarButton = Injector.component.get("PageBuilder/ToolbarButton")
+	const ToolbarButton = loadComponent("PageBuilder/ToolbarButton")
 	const onClick = React.useCallback((e) => {
 		e.preventDefault()
 		setEditorState(_editorState => RichUtils.toggleInlineStyle(
@@ -76,11 +86,46 @@ const InlineStyleControls = ({editorState, setEditorState}) => {
 	)
 }
 
-export const DraftEditor = ({text, fontSize, textAlign, ...props}) => {
-	const ElementContainer = Injector.component.get("PageBuilder/ElementContainer")
-	const ToolbarPortalRow = Injector.component.get("PageBuilder/ToolbarPortalRow")
-	const ToolbarPortalTop = Injector.component.get("PageBuilder/ToolbarPortalTop")
-	const ToolbarSeparator = Injector.component.get("PageBuilder/ToolbarSeparator")
+function ListControls({editorState, setEditorState}) {
+	const blockType = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType()
+	const ToolbarButton = loadComponent("PageBuilder/ToolbarButton")
+	const ToolbarSeparator = loadComponent("PageBuilder/ToolbarSeparator")
+	const indent = React.useCallback(() => {
+		setEditorState(_editorState => {
+			return RichUtils.onTab(
+				new KeyboardEvent("keydown", {keyCode: 9, which: 9, shiftKey: false}),
+				_editorState,
+				4, /* maxDepth */
+			)
+		})
+	}, [])
+	const deIndent = React.useCallback(() => {
+		setEditorState(_editorState => {
+			return RichUtils.onTab(
+				new KeyboardEvent("keydown", {keyCode: 9, which: 9, shiftKey: true}),
+				_editorState,
+				4, /* maxDepth */
+			)
+		})
+	}, [])
+	if (["unordered-list-item", "ordered-list-item"].includes(blockType)) {
+		return (
+			<React.Fragment>
+				<ToolbarSeparator />
+				<ToolbarButton tooltip={"Decrease Indent"} onClick={deIndent} iconName="mdiFormatIndentDecrease" />
+				<ToolbarButton tooltip={"Increase Indent"} onClick={indent} iconName="mdiFormatIndentIncrease" />
+			</React.Fragment>
+		)
+	}
+	return null
+}
+
+export const DraftEditor = ({...props}) => {
+	const ElementContainer = loadComponent("PageBuilder/ElementContainer")
+	const ToolbarPortalRow = loadComponent("PageBuilder/ToolbarPortalRow")
+	const ToolbarPortalTop = loadComponent("PageBuilder/ToolbarPortalTop")
+	const ToolbarSeparator = loadComponent("PageBuilder/ToolbarSeparator")
+	const ToolbarButton = loadComponent("PageBuilder/ToolbarButton")
 	const {actions: {setProp}} = useNode()
 	const refEditor = React.useRef()
 	const focusEditor = React.useCallback(() => refEditor.current.focus(), [])
@@ -101,21 +146,25 @@ export const DraftEditor = ({text, fontSize, textAlign, ...props}) => {
 
 	}, [])
 
-
-	// const toggleInlineStyle = (inlineStyle) => {
-	// 	setEditorState(_editorState => {
-	// 		console.log("a")
-	// 		const newState = RichUtils.toggleInlineStyle(
-	// 			_editorState,
-	// 			inlineStyle,
-	// 		)
-	// 		console.log({
-	// 			_editorState,
-	// 			newState,
-	// 		})
-	// 		return _editorState
-	// 	})
-	// }
+	const handleKeyCommand = React.useCallback((command, editorState) => {
+		const newState = RichUtils.handleKeyCommand(editorState, command)
+		if (newState) {
+			setEditorState(newState)
+			return true
+		}
+		return false
+	}, [])
+	const keyBindingFn = React.useCallback((e) => {
+		if (e.keyCode === 9 /* TAB */) {
+			setEditorState(_editorState => RichUtils.onTab(
+				e,
+				_editorState,
+				4, /* maxDepth */
+			))
+			return
+		}
+		return getDefaultKeyBinding(e)
+	}, [])
 
 	return (
 		<ElementContainer>
@@ -123,48 +172,36 @@ export const DraftEditor = ({text, fontSize, textAlign, ...props}) => {
 				<BlockStyleControls {...{editorState, setEditorState}} />
 				<ToolbarSeparator />
 				<InlineStyleControls {...{editorState, setEditorState}} />
+				<ListControls {...{editorState, setEditorState}} />
 			</ToolbarPortalTop>
-			{/*<ToolbarPortalRow>*/}
-			{/*	*/}
-			{/*</ToolbarPortalRow>*/}
-			{/*className="RichEditor-root"*/}
-			{/*className={classNames("RichEditor-editor", {"RichEditor-hidePlaceholder": !hasText})}*/}
+			{/*<ToolbarPortalRow></ToolbarPortalRow>*/}
 			<div onClick={focusEditor} className={styles.editorContainer}>
 				<Editor
 					{...{
 						// blockStyleFn,
 						editorState,
 						customStyleMap,
+						blockRenderMap,
 						onChange: setEditorState,
 						placeholder: "",
 						ref: refEditor,
 						spellCheck: true,
+						handleKeyCommand,
+						keyBindingFn,
 					}}
 				/>
 			</div>
-			<pre>{JSON.stringify(props.content, null, 2)}</pre>
-
-			{/*<ExampleEditor />*/}
-			{/*<Editor*/}
-			{/*	// editorState={editorState}*/}
-			{/*	toolbarClassName="toolbarClassName"*/}
-			{/*	wrapperClassName="wrapperClassName"*/}
-			{/*	editorClassName="editorClassName"*/}
-			{/*	// onEditorStateChange={this.onEditorStateChange}*/}
-			{/*/>*/}
 		</ElementContainer>
 	)
 }
 
 const defaultProps = {
-	text: "",
-	fontSize: 20,
 }
 
 DraftEditor.getTypeDisplayName = () => ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_ELEMENT.DraftEditor")
 
 function CreateButton(props) {
-	const CreateElementButton = Injector.component.get("PageBuilder/CreateElementButton")
+	const CreateElementButton = loadComponent("PageBuilder/CreateElementButton")
 	return <CreateElementButton {...props} element={<DraftEditor />} iconName="mdiCardTextOutline" />
 }
 
