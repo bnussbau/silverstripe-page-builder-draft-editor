@@ -1,6 +1,6 @@
 {
-	"name": "zauberfisch/silverstripe-page-builder",
-	"description": "SilverStripe module to allow for modular, block based content in SilverStripe",
+	"name": "zauberfisch/silverstripe-page-builder-draft-editor",
+	"description": "",
 	"type": "silverstripe-vendormodule",
 	"keywords": [
 		"silverstripe",
@@ -31,8 +31,8 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"zauberfisch\\PageBuilder\\": "src/",
-			"zauberfisch\\PageBuilder\\Tests\\": "tests/"
+			"zauberfisch\\PageBuilderCraftEditor\\": "src/",
+			"zauberfisch\\PageBuilderCraftEditor\\Tests\\": "tests/"
 		}
 	},
 	"extra": {

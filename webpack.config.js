@@ -37,8 +37,7 @@ const PATHS = {
 const devtool = (ENV !== "production") ? "source-map" : ""
 
 const externals = externalJS(ENV, PATHS)
-delete externals.reactstrap
-const externalsVendor = JSON.parse(JSON.stringify(externals))
+// delete externals.reactstrap
 externals["@craftjs/core"] = "CraftJsCore"
 externals["@craftjs/utils"] = "CraftJsUtils"
 
@@ -147,7 +146,7 @@ const config = [
 	{
 		name: "js",
 		entry: {
-			bundle: `${PATHS.SRC}/bundles/bundle.js`,
+			bundle: `${PATHS.SRC}/bundle.js`,
 		},
 		output: {
 			path: PATHS.DIST,
@@ -156,21 +155,6 @@ const config = [
 		devtool,
 		resolve,
 		externals,
-		module: _module,
-		plugins,
-	},
-	{
-		name: "vendorJs",
-		entry: {
-			vendor: `${PATHS.SRC}/bundles/vendor.js`,
-		},
-		output: {
-			path: PATHS.DIST,
-			filename: "js/[name].js",
-		},
-		devtool,
-		resolve,
-		externals: externalsVendor,
 		module: _module,
 		plugins,
 	},

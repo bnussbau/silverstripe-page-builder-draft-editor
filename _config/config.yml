@@ -1,5 +1,5 @@
 ---
-Name: zauberfisch-page-builder
+Name: zauberfisch-page-builder-draft-editor
 ---
 #SilverStripe\Admin\LeftAndMain:
 #  extra_requirements_css:
