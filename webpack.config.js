@@ -41,6 +41,19 @@ const externals = externalJS(ENV, PATHS)
 externals["@craftjs/core"] = "CraftJsCore"
 externals["@craftjs/utils"] = "CraftJsUtils"
 
+// externals["components/editor/CreateElementButton"] = "PageBuilder_CreateElementButton"
+// externals["components/editor/Toolbar"] = "PageBuilder_ToolbarButton"
+// externals["components/editor/Toolbar"] = "PageBuilder_ToolbarSelect"
+// externals["components/editor/Toolbar"] = "PageBuilder_ToolbarDropdown"
+// externals["components/editor/Toolbar"] = "PageBuilder_ToolbarMultiSelect"
+// externals["components/editor/Toolbar"] = "PageBuilder_ToolbarSeparator"
+// externals["components/editor/ElementUtilities"] = "PageBuilder_ElementContainer"
+// externals["components/editor/ElementUtilities"] = "PageBuilder_ToolbarPortalTop"
+// externals["components/editor/ElementUtilities"] = "PageBuilder_ToolbarPortalRow"
+// externals["components/utility/Icon"] = "PageBuilder_Icon"
+
+externals["@zauberfisch/pagebuilder"] = "Zauberfisch_PageBuilder_Components"
+
 const _module = moduleJS(ENV, PATHS)
 _module.rules[0].exclude = [
 	{

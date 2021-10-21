@@ -79,17 +79,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.DraftEditor = undefined;
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
-
-var _Injector = __webpack_require__(1);
-
-var _core = __webpack_require__(2);
 
 var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
 
@@ -103,6 +99,12 @@ var _DraftEditorModule = __webpack_require__("./client/src/DraftEditor.module.sc
 
 var _DraftEditorModule2 = _interopRequireDefault(_DraftEditorModule);
 
+var _components = __webpack_require__("./client/src/components/index.js");
+
+var _hooks = __webpack_require__("./client/src/hooks/index.js");
+
+var _pagebuilder = __webpack_require__(1);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
@@ -113,160 +115,44 @@ var customStyleMap = {
 	}
 };
 
-var INLINE_STYLES = [{ tooltip: "Bold", styleName: "BOLD", iconName: "mdiFormatBold" }, { tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic" }, { tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline" }, { tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant" }, { title: "Test", styleName: "MYCUSTOMTEST", color: "red", activeColor: "purple" }];
+var inlineStyles = [{ tooltip: "Bold", styleName: "BOLD", iconName: "mdiFormatBold" }, { tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic" }, { tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline" }, { tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant" }, { title: "Test", styleName: "MYCUSTOMTEST", color: "red", activeColor: "purple" }];
 
-var BLOCK_TYPES = [{ iconName: "mdiText", title: "Paragraph", value: "unstyled" }, { iconName: "mdiFormatHeader1", title: "Heading 1", value: "header-one" }, { iconName: "mdiFormatHeader2", title: "Heading 2", value: "header-two" }, { iconName: "mdiFormatHeader3", title: "Heading 3", value: "header-three" }, { iconName: "mdiFormatHeader4", title: "Heading 4", value: "header-four" }, { iconName: "mdiFormatHeader5", title: "Heading 5", value: "header-five" }, { iconName: "mdiFormatHeader6", title: "Heading 6", value: "header-six" }, { iconName: "mdiFormatQuoteClose", title: "Blockquote", value: "blockquote" }, { iconName: "mdiFormatListBulleted", title: "Bullet list", value: "unordered-list-item" }, { iconName: "mdiFormatListNumbered", title: "Numbered list", value: "ordered-list-item" }, { iconName: "mdiCodeBraces", title: "Code", value: "code-block" }];
-var _blockRenderMap = _immutable2.default.Map({
+var blockTypes = [{ iconName: "mdiText", title: "Paragraph", value: "unstyled" }, { iconName: "mdiFormatHeader1", title: "Heading 1", value: "header-one" }, { iconName: "mdiFormatHeader2", title: "Heading 2", value: "header-two" }, { iconName: "mdiFormatHeader3", title: "Heading 3", value: "header-three" }, { iconName: "mdiFormatHeader4", title: "Heading 4", value: "header-four" }, { iconName: "mdiFormatHeader5", title: "Heading 5", value: "header-five" }, { iconName: "mdiFormatHeader6", title: "Heading 6", value: "header-six" }, { iconName: "mdiFormatQuoteClose", title: "Blockquote", value: "blockquote" }, { iconName: "mdiFormatListBulleted", title: "Bullet list", value: "unordered-list-item" }, { iconName: "mdiFormatListNumbered", title: "Numbered list", value: "ordered-list-item" }, { iconName: "mdiCodeBraces", title: "Code", value: "code-block" }];
+var blockRenderMap = _draftJs.DefaultDraftBlockRenderMap.merge(_immutable2.default.Map({
 	"unstyled": {
 		element: "p",
 		aliasedElements: ["div"]
 	}
-});
-var blockRenderMap = _draftJs.DefaultDraftBlockRenderMap.merge(_blockRenderMap);
+}));
 
-var BlockStyleControls = function BlockStyleControls(_ref) {
-	var editorState = _ref.editorState,
-	    setEditorState = _ref.setEditorState;
-
-	var ToolbarSelect = (0, _Injector.loadComponent)("PageBuilder/ToolbarSelect");
-	var blockType = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType();
-	var setBlockType = _react2.default.useCallback(function (newBlockType) {
-		if (blockType !== newBlockType) {
-			setEditorState(function (_editorState) {
-				return _draftJs.RichUtils.toggleBlockType(_editorState, newBlockType);
-			});
-		}
-	}, [blockType]);
-	return _react2.default.createElement(ToolbarSelect, { showSelectedTitle: false, value: blockType, onChange: setBlockType, options: BLOCK_TYPES });
-};
-
-function InlineStyleControlsButton(_ref2) {
-	var styleName = _ref2.styleName,
-	    setEditorState = _ref2.setEditorState,
-	    active = _ref2.active,
-	    color = _ref2.color,
-	    background = _ref2.background,
-	    activeColor = _ref2.activeColor,
-	    activeBackground = _ref2.activeBackground,
-	    props = _objectWithoutProperties(_ref2, ["styleName", "setEditorState", "active", "color", "background", "activeColor", "activeBackground"]);
-
-	var ToolbarButton = (0, _Injector.loadComponent)("PageBuilder/ToolbarButton");
-	var onClick = _react2.default.useCallback(function (e) {
-		e.preventDefault();
-		setEditorState(function (_editorState) {
-			return _draftJs.RichUtils.toggleInlineStyle(_editorState, styleName);
-		});
-	}, [styleName]);
-	return _react2.default.createElement(ToolbarButton, _extends({}, _extends({}, props, { onClick: onClick, active: active }), { style: { color: active ? activeColor : color, background: active ? activeBackground : background } }));
-}
-
-var InlineStyleControls = function InlineStyleControls(_ref3) {
-	var editorState = _ref3.editorState,
-	    setEditorState = _ref3.setEditorState;
-
-	var currentStyle = editorState.getCurrentInlineStyle();
-	return _react2.default.createElement(
-		_react2.default.Fragment,
-		null,
-		INLINE_STYLES.map(function (inlineStyle) {
-			return _react2.default.createElement(InlineStyleControlsButton, _extends({ active: currentStyle.has(inlineStyle.styleName) }, _extends({}, inlineStyle, { editorState: editorState, setEditorState: setEditorState })));
-		})
-	);
-};
-
-function ListControls(_ref4) {
-	var editorState = _ref4.editorState,
-	    setEditorState = _ref4.setEditorState;
-
-	var blockType = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType();
-	var ToolbarButton = (0, _Injector.loadComponent)("PageBuilder/ToolbarButton");
-	var ToolbarSeparator = (0, _Injector.loadComponent)("PageBuilder/ToolbarSeparator");
-	var indent = _react2.default.useCallback(function () {
-		setEditorState(function (_editorState) {
-			return _draftJs.RichUtils.onTab(new KeyboardEvent("keydown", { keyCode: 9, which: 9, shiftKey: false }), _editorState, 4);
-		});
-	}, []);
-	var deIndent = _react2.default.useCallback(function () {
-		setEditorState(function (_editorState) {
-			return _draftJs.RichUtils.onTab(new KeyboardEvent("keydown", { keyCode: 9, which: 9, shiftKey: true }), _editorState, 4);
-		});
-	}, []);
-	if (["unordered-list-item", "ordered-list-item"].includes(blockType)) {
-		return _react2.default.createElement(
-			_react2.default.Fragment,
-			null,
-			_react2.default.createElement(ToolbarSeparator, null),
-			_react2.default.createElement(ToolbarButton, { tooltip: "Decrease Indent", onClick: deIndent, iconName: "mdiFormatIndentDecrease" }),
-			_react2.default.createElement(ToolbarButton, { tooltip: "Increase Indent", onClick: indent, iconName: "mdiFormatIndentIncrease" })
-		);
-	}
-	return null;
-}
-
-var DraftEditor = function DraftEditor(_ref5) {
-	var props = _objectWithoutProperties(_ref5, []);
-
-	var ElementContainer = (0, _Injector.loadComponent)("PageBuilder/ElementContainer");
-	var ToolbarPortalRow = (0, _Injector.loadComponent)("PageBuilder/ToolbarPortalRow");
-	var ToolbarPortalTop = (0, _Injector.loadComponent)("PageBuilder/ToolbarPortalTop");
-	var ToolbarSeparator = (0, _Injector.loadComponent)("PageBuilder/ToolbarSeparator");
-	var ToolbarButton = (0, _Injector.loadComponent)("PageBuilder/ToolbarButton");
-
-	var _useNode = (0, _core.useNode)(),
-	    setProp = _useNode.actions.setProp;
+var DraftEditor = function DraftEditor(_ref) {
+	var content = _ref.content,
+	    props = _objectWithoutProperties(_ref, ["content"]);
 
 	var refEditor = _react2.default.useRef();
-	var focusEditor = _react2.default.useCallback(function () {
-		return refEditor.current.focus();
-	}, []);
 
-	var _React$useState = _react2.default.useState(function () {
-		return _draftJs.EditorState.createEmpty();
-	}),
-	    _React$useState2 = _slicedToArray(_React$useState, 2),
-	    editorState = _React$useState2[0],
-	    _setEditorState = _React$useState2[1];
+	var _useEditorState = (0, _hooks.useEditorState)(content),
+	    _useEditorState2 = _slicedToArray(_useEditorState, 2),
+	    editorState = _useEditorState2[0],
+	    setEditorState = _useEditorState2[1];
 
-	var setEditorState = _react2.default.useCallback(function (newState) {
-		_setEditorState(function (oldState) {
-			if (typeof newState === "function") {
-				newState = newState(oldState);
-			}
-			setProp(function (_props) {
-				_props.content = JSON.parse(JSON.stringify(newState));
-			}, 500);
-			return newState;
-		});
-	}, []);
-
-	var handleKeyCommand = _react2.default.useCallback(function (command, editorState) {
-		var newState = _draftJs.RichUtils.handleKeyCommand(editorState, command);
-		if (newState) {
-			setEditorState(newState);
-			return true;
-		}
-		return false;
-	}, []);
-	var keyBindingFn = _react2.default.useCallback(function (e) {
-		if (e.keyCode === 9) {
-				setEditorState(function (_editorState) {
-					return _draftJs.RichUtils.onTab(e, _editorState, 4);
-				});
-				return;
-			}
-		return (0, _draftJs.getDefaultKeyBinding)(e);
-	}, []);
+	var _useEditorCallbacks = (0, _hooks.useEditorCallbacks)({ setEditorState: setEditorState, refEditor: refEditor }),
+	    handleKeyCommand = _useEditorCallbacks.handleKeyCommand,
+	    keyBindingFn = _useEditorCallbacks.keyBindingFn,
+	    focusEditor = _useEditorCallbacks.focusEditor;
 
 	return _react2.default.createElement(
-		ElementContainer,
+		_pagebuilder.ElementContainer,
 		null,
 		_react2.default.createElement(
-			ToolbarPortalTop,
+			_pagebuilder.ToolbarPortalTop,
 			null,
-			_react2.default.createElement(BlockStyleControls, { editorState: editorState, setEditorState: setEditorState }),
-			_react2.default.createElement(ToolbarSeparator, null),
-			_react2.default.createElement(InlineStyleControls, { editorState: editorState, setEditorState: setEditorState }),
-			_react2.default.createElement(ListControls, { editorState: editorState, setEditorState: setEditorState })
+			_react2.default.createElement(_components.BlockStyleControls, { editorState: editorState, setEditorState: setEditorState, blockTypes: blockTypes }),
+			_react2.default.createElement(_pagebuilder.ToolbarSeparator, null),
+			_react2.default.createElement(_components.InlineStyleControls, { editorState: editorState, setEditorState: setEditorState, inlineStyles: inlineStyles }),
+			_react2.default.createElement(_components.ListControls, { editorState: editorState, setEditorState: setEditorState }),
+			_react2.default.createElement(_components.LinkControls, { editorState: editorState, setEditorState: setEditorState }),
+			_react2.default.createElement(_components.DebugControls, { editorState: editorState, setEditorState: setEditorState })
 		),
 		_react2.default.createElement(
 			"div",
@@ -290,12 +176,11 @@ exports.DraftEditor = DraftEditor;
 var defaultProps = {};
 
 DraftEditor.getTypeDisplayName = function () {
-	return ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_ELEMENT.DraftEditor");
+	return ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.DraftEditor");
 };
 
 function CreateButton(props) {
-	var CreateElementButton = (0, _Injector.loadComponent)("PageBuilder/CreateElementButton");
-	return _react2.default.createElement(CreateElementButton, _extends({}, props, { element: _react2.default.createElement(DraftEditor, null), iconName: "mdiCardTextOutline" }));
+	return _react2.default.createElement(_pagebuilder.CreateElementButton, _extends({}, props, { element: _react2.default.createElement(DraftEditor, null), iconName: "mdiCardTextOutline" }));
 }
 
 DraftEditor.craft = {
@@ -311,7 +196,7 @@ DraftEditor.craft = {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-module.exports = {"editorContainer":"_1YCUVvuKHmc_GotTASQ-aT","public-DraftEditor-content":"_2h4f2w2QzU7GKCRqXQ6-rS"};
+module.exports = {"editorContainer":"_1YCUVvuKHmc_GotTASQ-aT","public-DraftEditor-content":"_2h4f2w2QzU7GKCRqXQ6-rS","link":"_3RxT1DMoc4nq7LHpAsSK3P"};
 
 /***/ }),
 
@@ -321,7 +206,7 @@ module.exports = {"editorContainer":"_1YCUVvuKHmc_GotTASQ-aT","public-DraftEdito
 "use strict";
 
 
-var _Injector = __webpack_require__(1);
+var _Injector = __webpack_require__(2);
 
 var _Injector2 = _interopRequireDefault(_Injector);
 
@@ -334,6 +219,677 @@ window.document.addEventListener("DOMContentLoaded", function () {
 		"PageBuilder/DraftEditor": _DraftEditor.DraftEditor
 	});
 });
+
+/***/ }),
+
+/***/ "./client/src/components/BlockStyleControls.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.BlockStyleControls = BlockStyleControls;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
+
+var _pagebuilder = __webpack_require__(1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function BlockStyleControls(_ref) {
+	var editorState = _ref.editorState,
+	    setEditorState = _ref.setEditorState,
+	    blockTypes = _ref.blockTypes;
+
+	var blockType = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType();
+	var setBlockType = _react2.default.useCallback(function (newBlockType) {
+		if (blockType !== newBlockType) {
+			setEditorState(function (_editorState) {
+				return _draftJs.RichUtils.toggleBlockType(_editorState, newBlockType);
+			});
+		}
+	}, [blockType]);
+	return _react2.default.createElement(_pagebuilder.ToolbarSelect, { showSelectedTitle: false, value: blockType, onChange: setBlockType, options: blockTypes });
+}
+
+/***/ }),
+
+/***/ "./client/src/components/DebugControls.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.DebugControls = DebugControls;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
+
+var _pagebuilder = __webpack_require__(1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DebugControls(_ref) {
+	var editorState = _ref.editorState;
+
+	var logState = function logState() {
+		console.log((0, _draftJs.convertToRaw)(editorState.getCurrentContent()));
+	};
+	return _react2.default.createElement(_pagebuilder.ToolbarButton, { title: "Log", onClick: logState });
+}
+
+/***/ }),
+
+/***/ "./client/src/components/InlineStyleControlsButton.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports.InlineStyleControls = InlineStyleControls;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
+
+var _pagebuilder = __webpack_require__(1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function InlineStyleControlsButton(_ref) {
+	var styleName = _ref.styleName,
+	    setEditorState = _ref.setEditorState,
+	    active = _ref.active,
+	    color = _ref.color,
+	    background = _ref.background,
+	    activeColor = _ref.activeColor,
+	    activeBackground = _ref.activeBackground,
+	    props = _objectWithoutProperties(_ref, ["styleName", "setEditorState", "active", "color", "background", "activeColor", "activeBackground"]);
+
+	var onClick = _react2.default.useCallback(function (e) {
+		e.preventDefault();
+		setEditorState(function (_editorState) {
+			return _draftJs.RichUtils.toggleInlineStyle(_editorState, styleName);
+		});
+	}, [styleName]);
+	return _react2.default.createElement(_pagebuilder.ToolbarButton, _extends({}, _extends({}, props, { onClick: onClick, active: active }), { style: { color: active ? activeColor : color, background: active ? activeBackground : background } }));
+}
+
+function InlineStyleControls(_ref2) {
+	var editorState = _ref2.editorState,
+	    setEditorState = _ref2.setEditorState,
+	    inlineStyles = _ref2.inlineStyles;
+
+	var currentStyle = editorState.getCurrentInlineStyle();
+	return _react2.default.createElement(
+		_react2.default.Fragment,
+		null,
+		inlineStyles.map(function (inlineStyle) {
+			return _react2.default.createElement(InlineStyleControlsButton, _extends({ active: currentStyle.has(inlineStyle.styleName) }, _extends({}, inlineStyle, { editorState: editorState, setEditorState: setEditorState })));
+		})
+	);
+}
+
+/***/ }),
+
+/***/ "./client/src/components/LinkControls.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+exports.LinkControls = LinkControls;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
+
+var _reactstrap = __webpack_require__(7);
+
+var _pagebuilder = __webpack_require__(1);
+
+var _LinkModals = __webpack_require__("./client/src/components/LinkModals.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function RemoveLinkButton(_ref) {
+	var editorState = _ref.editorState,
+	    setEditorState = _ref.setEditorState,
+	    disabled = _ref.disabled;
+
+	var removeLink = function removeLink(e) {
+		e.preventDefault();
+		var selection = editorState.getSelection();
+		if (!selection.isCollapsed()) {
+			setEditorState(_draftJs.RichUtils.toggleLink(editorState, selection, null));
+		}
+	};
+	return _react2.default.createElement(_pagebuilder.ToolbarButton, { iconName: "mdiLinkOff", tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.RemoveLink"), onClick: removeLink, disabled: disabled });
+}
+
+function AddLinkButton(_ref2) {
+	var editorState = _ref2.editorState,
+	    setEditorState = _ref2.setEditorState,
+	    disabled = _ref2.disabled,
+	    refCurrentLinkData = _ref2.refCurrentLinkData;
+
+	var linkTypes = _react2.default.useMemo(function () {
+		return [{
+			id: "Internal",
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkInternal"),
+			component: _LinkModals.LinkModalInternal
+		}, {
+			id: "External",
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkExternal"),
+			component: _LinkModals.LinkModalExternal
+		}, {
+			id: "Email",
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkEmail"),
+			component: _LinkModals.LinkModalEmail
+		}, {
+			id: "File",
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkFile"),
+			component: _LinkModals.LinkModalFile
+		}];
+	}, []);
+
+	var _React$useState = _react2.default.useState(""),
+	    _React$useState2 = _slicedToArray(_React$useState, 2),
+	    openModalId = _React$useState2[0],
+	    setOpenModalId = _React$useState2[1];
+
+	var onMouseDown = _react2.default.useCallback(function (e) {
+		e.preventDefault();
+	}, []);
+
+	var onClick = _react2.default.useCallback(function (e) {
+		setOpenModalId(e.target.dataset.modalid);
+	}, []);
+	var onInsert = _react2.default.useCallback(function (linkData) {
+		delete linkData.SecurityID;
+		delete linkData["action_insert"];
+		delete linkData.AssetEditorHeaderFieldGroup;
+		delete linkData.TitleHeader;
+		delete linkData.Editor;
+		delete linkData.FileSpecs;
+		linkData.Type = openModalId;
+
+		setEditorState(function (_editorState) {
+			var contentState = _editorState.getCurrentContent();
+			var contentStateWithEntity = contentState.createEntity("LINK", "MUTABLE", linkData);
+			var entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+			var newEditorState = _draftJs.EditorState.set(_editorState, { currentContent: contentStateWithEntity });
+			return _draftJs.RichUtils.toggleLink(newEditorState, newEditorState.getSelection(), entityKey);
+		});
+		setOpenModalId("");
+	}, [openModalId]);
+	var onClosed = _react2.default.useCallback(function () {
+		return setOpenModalId("");
+	}, []);
+
+	return _react2.default.createElement(
+		_react2.default.Fragment,
+		null,
+		_react2.default.createElement(
+			_pagebuilder.ToolbarDropdown,
+			{ placeholder: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLink"), iconName: "mdiLink", disabled: disabled },
+			linkTypes.map(function (_ref3) {
+				var title = _ref3.title,
+				    id = _ref3.id;
+				return _react2.default.createElement(
+					_reactstrap.DropdownItem,
+					{ "data-modalid": id, onMouseDown: onMouseDown, onClick: onClick, style: { padding: "0 10px" } },
+					title
+				);
+			})
+		),
+		linkTypes.map(function (_ref4) {
+			var id = _ref4.id,
+			    component = _ref4.component;
+			return _react2.default.createElement(component, { key: id, fileAttributes: {}, onInsert: onInsert, onClosed: onClosed, isOpen: openModalId === id });
+		})
+	);
+}
+
+function LinkControls(_ref5) {
+	var editorState = _ref5.editorState,
+	    setEditorState = _ref5.setEditorState;
+
+	var selection = editorState.getSelection();
+	var canInsertLink = false;
+	var canRemoveLink = false;
+
+	if (!selection.isCollapsed()) {
+		canInsertLink = true;
+		var contentState = editorState.getCurrentContent();
+		var startKey = editorState.getSelection().getStartKey();
+		var startOffset = editorState.getSelection().getStartOffset();
+		var blockWithLinkAtBeginning = contentState.getBlockForKey(startKey);
+		var linkKey = blockWithLinkAtBeginning.getEntityAt(startOffset);
+		if (linkKey) {
+			canRemoveLink = true;
+		} else {}
+	}
+	return _react2.default.createElement(
+		_react2.default.Fragment,
+		null,
+		_react2.default.createElement(_pagebuilder.ToolbarSeparator, null),
+		_react2.default.createElement(AddLinkButton, { editorState: editorState, setEditorState: setEditorState, disabled: !canInsertLink }),
+		_react2.default.createElement(RemoveLinkButton, { editorState: editorState, setEditorState: setEditorState, disabled: !canRemoveLink })
+	);
+}
+
+/***/ }),
+
+/***/ "./client/src/components/LinkModals.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.LinkModalFile = undefined;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports.LinkModalExternal = LinkModalExternal;
+exports.LinkModalInternal = LinkModalInternal;
+exports.LinkModalEmail = LinkModalEmail;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Injector = __webpack_require__(2);
+
+var _InsertLinkModal = __webpack_require__(3);
+
+var _InsertMediaModal = __webpack_require__(5);
+
+var _InsertMediaModal2 = _interopRequireDefault(_InsertMediaModal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+var InsertLinkExternalModal = (0, _InsertLinkModal.createInsertLinkModal)("SilverStripe\\Admin\\LeftAndMain", "EditorExternalLink");
+var InsertLinkEmailModal = (0, _InsertLinkModal.createInsertLinkModal)("SilverStripe\\Admin\\LeftAndMain", "EditorEmailLink");
+var InsertLinkInternalModal = (0, _InsertLinkModal.createInsertLinkModal)("SilverStripe\\CMS\\Controllers\\CMSPageEditController", "editorInternalLink");
+
+var InjectableInsertMediaModal = (0, _Injector.loadComponent)(_InsertMediaModal2.default);
+
+function LinkModalExternal(props) {
+	return _react2.default.createElement(InsertLinkExternalModal, _extends({
+		title: i18n._t("Admin.LINK_EXTERNAL", "Insert external link"),
+		requireLinkText: false
+	}, props));
+}
+
+function LinkModalInternal(props) {
+	return _react2.default.createElement(InsertLinkInternalModal, _extends({
+		title: i18n._t("CMS.LINK_ANCHOR", "Link to an anchor on a page"),
+		requireLinkText: false
+	}, props));
+}
+
+function LinkModalEmail(props) {
+	return _react2.default.createElement(InsertLinkEmailModal, _extends({
+		title: i18n._t("Admin.LINK_EMAIL", "Insert email link"),
+		requireLinkText: false
+	}, props));
+}
+
+function LinkModalFile(_ref) {
+	var _onInsert = _ref.onInsert,
+	    props = _objectWithoutProperties(_ref, ["onInsert"]);
+
+	return _react2.default.createElement(InjectableInsertMediaModal, _extends({}, props, {
+		type: "insert-link",
+		onInsert: function onInsert(e) {
+			console.log({ onInsert: e });
+			_onInsert(e);
+			return Promise.resolve();
+		},
+		title: false,
+		requireLinkText: false
+	}));
+}
+exports.LinkModalFile = LinkModalFile;
+
+/***/ }),
+
+/***/ "./client/src/components/ListControls.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.ListControls = ListControls;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
+
+var _pagebuilder = __webpack_require__(1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ListControls(_ref) {
+	var editorState = _ref.editorState,
+	    setEditorState = _ref.setEditorState;
+
+	var blockType = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType();
+	var indent = _react2.default.useCallback(function () {
+		setEditorState(function (_editorState) {
+			return _draftJs.RichUtils.onTab(new KeyboardEvent("keydown", { keyCode: 9, which: 9, shiftKey: false }), _editorState, 4);
+		});
+	}, []);
+	var deIndent = _react2.default.useCallback(function () {
+		setEditorState(function (_editorState) {
+			return _draftJs.RichUtils.onTab(new KeyboardEvent("keydown", { keyCode: 9, which: 9, shiftKey: true }), _editorState, 4);
+		});
+	}, []);
+	var disabled = !["unordered-list-item", "ordered-list-item"].includes(blockType);
+	return _react2.default.createElement(
+		_react2.default.Fragment,
+		null,
+		_react2.default.createElement(_pagebuilder.ToolbarSeparator, null),
+		_react2.default.createElement(_pagebuilder.ToolbarButton, { disabled: disabled, tooltip: "Decrease Indent", onClick: deIndent, iconName: "mdiFormatIndentDecrease" }),
+		_react2.default.createElement(_pagebuilder.ToolbarButton, { disabled: disabled, tooltip: "Increase Indent", onClick: indent, iconName: "mdiFormatIndentIncrease" })
+	);
+}
+
+/***/ }),
+
+/***/ "./client/src/components/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _BlockStyleControls = __webpack_require__("./client/src/components/BlockStyleControls.js");
+
+Object.keys(_BlockStyleControls).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _BlockStyleControls[key];
+    }
+  });
+});
+
+var _InlineStyleControlsButton = __webpack_require__("./client/src/components/InlineStyleControlsButton.js");
+
+Object.keys(_InlineStyleControlsButton).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _InlineStyleControlsButton[key];
+    }
+  });
+});
+
+var _ListControls = __webpack_require__("./client/src/components/ListControls.js");
+
+Object.keys(_ListControls).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _ListControls[key];
+    }
+  });
+});
+
+var _LinkControls = __webpack_require__("./client/src/components/LinkControls.js");
+
+Object.keys(_LinkControls).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _LinkControls[key];
+    }
+  });
+});
+
+var _LinkModals = __webpack_require__("./client/src/components/LinkModals.js");
+
+Object.keys(_LinkModals).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _LinkModals[key];
+    }
+  });
+});
+
+var _DebugControls = __webpack_require__("./client/src/components/DebugControls.js");
+
+Object.keys(_DebugControls).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _DebugControls[key];
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./client/src/hooks/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _useEditorState = __webpack_require__("./client/src/hooks/useEditorState.js");
+
+Object.keys(_useEditorState).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _useEditorState[key];
+    }
+  });
+});
+
+var _useEditorCallbacks = __webpack_require__("./client/src/hooks/useEditorCallbacks.js");
+
+Object.keys(_useEditorCallbacks).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _useEditorCallbacks[key];
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./client/src/hooks/useEditorCallbacks.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.useEditorCallbacks = useEditorCallbacks;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function useEditorCallbacks(_ref) {
+	var setEditorState = _ref.setEditorState,
+	    refEditor = _ref.refEditor;
+
+	return {
+		handleKeyCommand: _react2.default.useCallback(function (command, editorState) {
+			var newState = _draftJs.RichUtils.handleKeyCommand(editorState, command);
+			if (newState) {
+				setEditorState(newState);
+				return true;
+			}
+			return false;
+		}, []),
+		keyBindingFn: _react2.default.useCallback(function (e) {
+			if (e.keyCode === 9) {
+					setEditorState(function (_editorState) {
+						return _draftJs.RichUtils.onTab(e, _editorState, 4);
+					});
+					return;
+				}
+			return (0, _draftJs.getDefaultKeyBinding)(e);
+		}, []),
+		focusEditor: _react2.default.useCallback(function () {
+			return refEditor.current.focus();
+		}, [])
+	};
+}
+
+/***/ }),
+
+/***/ "./client/src/hooks/useEditorState.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+exports.Link = Link;
+exports.useEditorState = useEditorState;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
+
+var _core = __webpack_require__(4);
+
+var _DraftEditorModule = __webpack_require__("./client/src/DraftEditor.module.scss");
+
+var _DraftEditorModule2 = _interopRequireDefault(_DraftEditorModule);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Link(_ref) {
+	var contentState = _ref.contentState,
+	    entityKey = _ref.entityKey,
+	    children = _ref.children;
+
+	return _react2.default.createElement(
+		"span",
+		{ title: JSON.stringify(contentState.getEntity(entityKey).getData()), className: _DraftEditorModule2.default.link },
+		children
+	);
+}
+
+function findLinkEntities(contentBlock, callback, contentState) {
+	contentBlock.findEntityRanges(function (character) {
+		var entityKey = character.getEntity();
+		return entityKey !== null && contentState.getEntity(entityKey).getType() === "LINK";
+	}, callback);
+}
+
+var decorator = new _draftJs.CompositeDecorator([{
+	strategy: findLinkEntities,
+	component: Link
+}]);
+
+function useEditorState(initialContent) {
+	var _useNode = (0, _core.useNode)(),
+	    setProp = _useNode.actions.setProp;
+
+	var _React$useState = _react2.default.useState(function () {
+		if (initialContent) {
+			var contentState = (0, _draftJs.convertFromRaw)(initialContent);
+			return _draftJs.EditorState.createWithContent(contentState, decorator);
+		}
+
+		return _draftJs.EditorState.createEmpty(decorator);
+	}),
+	    _React$useState2 = _slicedToArray(_React$useState, 2),
+	    editorState = _React$useState2[0],
+	    _setEditorState = _React$useState2[1];
+
+	var setEditorState = _react2.default.useCallback(function (newState) {
+		_setEditorState(function (oldState) {
+			if (typeof newState === "function") {
+				newState = newState(oldState);
+			}
+			setProp(function (_props) {
+				_props.content = (0, _draftJs.convertToRaw)(newState.getCurrentContent());
+			}, 500);
+			return newState;
+		});
+	}, []);
+	return [editorState, setEditorState];
+}
 
 /***/ }),
 
@@ -4137,7 +4693,7 @@ module.exports = DraftEditorEditHandler;
  * 
  * @emails oncall+draft_js
  */
-var ReactDOMComet = __webpack_require__(3);
+var ReactDOMComet = __webpack_require__(6);
 
 var flushControlled = ReactDOMComet.unstable_flushControlled;
 module.exports = flushControlled;
@@ -23662,21 +24218,49 @@ module.exports = React;
 /***/ 1:
 /***/ (function(module, exports) {
 
-module.exports = Injector;
+module.exports = Zauberfisch_PageBuilder_Components;
 
 /***/ }),
 
 /***/ 2:
 /***/ (function(module, exports) {
 
-module.exports = CraftJsCore;
+module.exports = Injector;
 
 /***/ }),
 
 /***/ 3:
 /***/ (function(module, exports) {
 
+module.exports = InsertLinkModal;
+
+/***/ }),
+
+/***/ 4:
+/***/ (function(module, exports) {
+
+module.exports = CraftJsCore;
+
+/***/ }),
+
+/***/ 5:
+/***/ (function(module, exports) {
+
+module.exports = InsertMediaModal;
+
+/***/ }),
+
+/***/ 6:
+/***/ (function(module, exports) {
+
 module.exports = ReactDom;
+
+/***/ }),
+
+/***/ 7:
+/***/ (function(module, exports) {
+
+module.exports = Reactstrap;
 
 /***/ })
 
