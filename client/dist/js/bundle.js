@@ -152,7 +152,8 @@ var DraftEditor = exports.DraftEditor = function DraftEditor(_ref) {
 	var _useEditorCallbacks = (0, _hooks.useEditorCallbacks)({ setEditorState: setEditorState, refEditor: refEditor }),
 	    handleKeyCommand = _useEditorCallbacks.handleKeyCommand,
 	    keyBindingFn = _useEditorCallbacks.keyBindingFn,
-	    focusEditor = _useEditorCallbacks.focusEditor;
+	    focusEditor = _useEditorCallbacks.focusEditor,
+	    handleReturn = _useEditorCallbacks.handleReturn;
 
 	return _react2.default.createElement(
 		_pagebuilder.ElementContainer,
@@ -183,7 +184,8 @@ var DraftEditor = exports.DraftEditor = function DraftEditor(_ref) {
 				ref: refEditor,
 				spellCheck: true,
 				handleKeyCommand: handleKeyCommand,
-				keyBindingFn: keyBindingFn
+				keyBindingFn: keyBindingFn,
+				handleReturn: handleReturn
 			})
 		)
 	);
@@ -988,6 +990,15 @@ function useEditorCallbacks(_ref) {
 		}, []),
 		focusEditor: _react2.default.useCallback(function () {
 			return refEditor.current.focus();
+		}, []),
+		handleReturn: _react2.default.useCallback(function (e) {
+			if (e.shiftKey) {
+				setEditorState(function (_editorState) {
+					return _ExtendedRichUtils.ExtendedRichUtils.insertSoftNewline(_editorState);
+				});
+				return "handled";
+			}
+			return "not-handled";
 		}, [])
 	};
 }

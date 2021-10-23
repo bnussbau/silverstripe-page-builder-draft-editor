@@ -20,7 +20,14 @@ export function useEditorCallbacks({setEditorState, refEditor}) {
 			}
 			return getDefaultKeyBinding(e)
 		}, []),
-		focusEditor: React.useCallback(() => refEditor.current.focus(), [])
+		focusEditor: React.useCallback(() => refEditor.current.focus(), []),
+		handleReturn: React.useCallback((e) => {
+			if (e.shiftKey) {
+				setEditorState(_editorState => RichUtils.insertSoftNewline(_editorState))
+				return "handled"
+			}
+			return "not-handled"
+		}, []),
 	}
 }
 

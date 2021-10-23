@@ -64,7 +64,7 @@ function blockStyleFn(contentBlock) {
 export const DraftEditor = ({content}) => {
 	const refEditor = React.useRef()
 	const [editorState, setEditorState] = useEditorState(content)
-	const {handleKeyCommand, keyBindingFn, focusEditor} = useEditorCallbacks({setEditorState, refEditor})
+	const {handleKeyCommand, keyBindingFn, focusEditor, handleReturn} = useEditorCallbacks({setEditorState, refEditor})
 	// /admin/methodSchema/Modals/EditorExternalLink
 	// /admin/methodSchema/Modals/EditorEmailLink
 	// /admin/methodSchema/Modals/editorInternalLink
@@ -96,6 +96,7 @@ export const DraftEditor = ({content}) => {
 						spellCheck: true,
 						handleKeyCommand,
 						keyBindingFn,
+						handleReturn,
 					}}
 				/>
 			</div>
