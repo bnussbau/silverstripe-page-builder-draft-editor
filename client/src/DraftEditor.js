@@ -61,7 +61,7 @@ function blockStyleFn(contentBlock) {
 	}
 }
 
-export const DraftEditor = ({content, ...props}) => {
+export const DraftEditor = ({content}) => {
 	const refEditor = React.useRef()
 	const [editorState, setEditorState] = useEditorState(content)
 	const {handleKeyCommand, keyBindingFn, focusEditor} = useEditorCallbacks({setEditorState, refEditor})
@@ -91,7 +91,7 @@ export const DraftEditor = ({content, ...props}) => {
 						blockRenderMap,
 						blockStyleFn,
 						onChange: setEditorState,
-						placeholder: "",
+						placeholder: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Placeholder"),
 						ref: refEditor,
 						spellCheck: true,
 						handleKeyCommand,

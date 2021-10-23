@@ -18,10 +18,10 @@ export function AlignmentControls({editorState, setEditorState}) {
 	const alignJustify = React.useCallback((e) => align(e, "JUSTIFY"), [])
 	return (
 		<React.Fragment>
-			<ToolbarButton onClick={alignLeft} active={currentAlignment === "LEFT"} iconName="mdiFormatAlignLeft" />
-			<ToolbarButton onClick={alignCenter} active={currentAlignment === "CENTER"} iconName="mdiFormatAlignCenter" />
-			<ToolbarButton onClick={alignRight} active={currentAlignment === "RIGHT"} iconName="mdiFormatAlignRight" />
-			<ToolbarButton onClick={alignJustify} active={currentAlignment === "JUSTIFY"} iconName="mdiFormatAlignJustify" />
+			<ToolbarButton onClick={alignLeft} active={currentAlignment === "LEFT"} iconName="mdiFormatAlignLeft" tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignLeft")} />
+			<ToolbarButton onClick={alignCenter} active={currentAlignment === "CENTER"} iconName="mdiFormatAlignCenter" tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignCenter")} />
+			<ToolbarButton onClick={alignRight} active={currentAlignment === "RIGHT"} iconName="mdiFormatAlignRight" tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignRight")} />
+			<ToolbarButton onClick={alignJustify} active={currentAlignment === "JUSTIFY"} iconName="mdiFormatAlignJustify" tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignJustify")} />
 		</React.Fragment>
 	)
 }

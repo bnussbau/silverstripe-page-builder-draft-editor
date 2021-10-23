@@ -2,6 +2,7 @@ import React from "react"
 import {CompositeDecorator, convertToRaw, convertFromRaw, EditorState} from "draft-js"
 import {useNode} from "@craftjs/core"
 import styles from "../DraftEditor.module.scss"
+import {EventBus} from "@zauberfisch/pagebuilder"
 
 export function Link({contentState, entityKey, children}) {
 	// const {url} = contentState.getEntity(entityKey).getData()
@@ -31,26 +32,34 @@ const decorator = new CompositeDecorator([
 	},
 ])
 
+function createEditorState(initialContent) {
+	return initialContent ? EditorState.createWithContent(convertFromRaw(initialContent), decorator) : EditorState.createEmpty(decorator)
+}
+
 export function useEditorState(initialContent) {
 	const {actions: {setProp}} = useNode()
-	const [editorState, _setEditorState] = React.useState(() => {
-		if (initialContent) {
-			const contentState = convertFromRaw(initialContent)
-			return EditorState.createWithContent(contentState, decorator)
+	const [editorState, _setEditorState] = React.useState(() => createEditorState(initialContent))
+	const refInitialContent = React.useRef()
+	refInitialContent.current = initialContent
+	React.useEffect(() => {
+		const eventId = EventBus.on("RELOAD_STATE", () => {
+			_setEditorState(createEditorState(refInitialContent.current))
+		})
+		return () => {
+			EventBus.off("RELOAD_STATE", eventId)
 		}
-		// initialContent
-		return EditorState.createEmpty(decorator)
-	})
+	}, [])
 	const setEditorState = React.useCallback((newState) => {
 		_setEditorState((oldState) => {
 			if (typeof newState === "function") {
 				newState = newState(oldState)
 			}
-			setProp((_props) => {
+			const oldRaw = convertToRaw(oldState.getCurrentContent())
+			const newRaw = convertToRaw(newState.getCurrentContent())
+			if (JSON.stringify(oldRaw) !== JSON.stringify(newRaw)) {
 				// eslint-disable-next-line no-param-reassign
-				_props.content = convertToRaw(newState.getCurrentContent())
-				// _props.content = JSON.parse(JSON.stringify(newState))
-			}, 500)
+				setProp((_props) => _props.content = newRaw, 500)
+			}
 			return newState
 		})
 	}, [])

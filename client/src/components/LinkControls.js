@@ -124,7 +124,7 @@ function AddLinkButton({editorState, setEditorState, disabled, refCurrentLinkDat
 
 	return (
 		<React.Fragment>
-			<ToolbarDropdown placeholder={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLink")} iconName="mdiLink" disabled={disabled}>
+			<ToolbarDropdown tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLink")} iconName="mdiLink" disabled={disabled}>
 				{linkTypes.map(({title, id}) => (
 					<DropdownItem data-modalid={id} onMouseDown={onMouseDown} onClick={onClick} style={{padding: "0 10px"}}>
 						{title}

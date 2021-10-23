@@ -109,8 +109,6 @@ var _ExtendedRichUtils = __webpack_require__("./client/src/ExtendedRichUtils.js"
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
 var customStyleMap = {
 	MYCUSTOMTEST: {
 		color: "red"
@@ -141,9 +139,8 @@ function blockStyleFn(contentBlock) {
 	}
 }
 
-var DraftEditor = function DraftEditor(_ref) {
-	var content = _ref.content,
-	    props = _objectWithoutProperties(_ref, ["content"]);
+var DraftEditor = exports.DraftEditor = function DraftEditor(_ref) {
+	var content = _ref.content;
 
 	var refEditor = _react2.default.useRef();
 
@@ -182,7 +179,7 @@ var DraftEditor = function DraftEditor(_ref) {
 				blockRenderMap: blockRenderMap,
 				blockStyleFn: blockStyleFn,
 				onChange: setEditorState,
-				placeholder: "",
+				placeholder: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Placeholder"),
 				ref: refEditor,
 				spellCheck: true,
 				handleKeyCommand: handleKeyCommand,
@@ -192,7 +189,6 @@ var DraftEditor = function DraftEditor(_ref) {
 	);
 };
 
-exports.DraftEditor = DraftEditor;
 var defaultProps = {};
 
 DraftEditor.getTypeDisplayName = function () {
@@ -390,10 +386,10 @@ function AlignmentControls(_ref) {
 	return _react2.default.createElement(
 		_react2.default.Fragment,
 		null,
-		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignLeft, active: currentAlignment === "LEFT", iconName: "mdiFormatAlignLeft" }),
-		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignCenter, active: currentAlignment === "CENTER", iconName: "mdiFormatAlignCenter" }),
-		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignRight, active: currentAlignment === "RIGHT", iconName: "mdiFormatAlignRight" }),
-		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignJustify, active: currentAlignment === "JUSTIFY", iconName: "mdiFormatAlignJustify" })
+		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignLeft, active: currentAlignment === "LEFT", iconName: "mdiFormatAlignLeft", tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignLeft") }),
+		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignCenter, active: currentAlignment === "CENTER", iconName: "mdiFormatAlignCenter", tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignCenter") }),
+		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignRight, active: currentAlignment === "RIGHT", iconName: "mdiFormatAlignRight", tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignRight") }),
+		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignJustify, active: currentAlignment === "JUSTIFY", iconName: "mdiFormatAlignJustify", tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignJustify") })
 	);
 }
 
@@ -433,7 +429,7 @@ function BlockStyleControls(_ref) {
 			});
 		}
 	}, [blockType]);
-	return _react2.default.createElement(_pagebuilder.ToolbarSelect, { showSelectedTitle: false, value: blockType, onChange: setBlockType, options: blockTypes });
+	return _react2.default.createElement(_pagebuilder.ToolbarSelect, { showSelectedTitle: false, value: blockType, onChange: setBlockType, options: blockTypes, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.BlockType") });
 }
 
 /***/ }),
@@ -642,7 +638,7 @@ function AddLinkButton(_ref2) {
 		null,
 		_react2.default.createElement(
 			_pagebuilder.ToolbarDropdown,
-			{ placeholder: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLink"), iconName: "mdiLink", disabled: disabled },
+			{ tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLink"), iconName: "mdiLink", disabled: disabled },
 			linkTypes.map(function (_ref3) {
 				var title = _ref3.title,
 				    id = _ref3.id;
@@ -1025,6 +1021,8 @@ var _DraftEditorModule = __webpack_require__("./client/src/DraftEditor.module.sc
 
 var _DraftEditorModule2 = _interopRequireDefault(_DraftEditorModule);
 
+var _pagebuilder = __webpack_require__(1);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function Link(_ref) {
@@ -1051,30 +1049,43 @@ var decorator = new _draftJs.CompositeDecorator([{
 	component: Link
 }]);
 
+function createEditorState(initialContent) {
+	return initialContent ? _draftJs.EditorState.createWithContent((0, _draftJs.convertFromRaw)(initialContent), decorator) : _draftJs.EditorState.createEmpty(decorator);
+}
+
 function useEditorState(initialContent) {
 	var _useNode = (0, _core.useNode)(),
 	    setProp = _useNode.actions.setProp;
 
 	var _React$useState = _react2.default.useState(function () {
-		if (initialContent) {
-			var contentState = (0, _draftJs.convertFromRaw)(initialContent);
-			return _draftJs.EditorState.createWithContent(contentState, decorator);
-		}
-
-		return _draftJs.EditorState.createEmpty(decorator);
+		return createEditorState(initialContent);
 	}),
 	    _React$useState2 = _slicedToArray(_React$useState, 2),
 	    editorState = _React$useState2[0],
 	    _setEditorState = _React$useState2[1];
 
+	var refInitialContent = _react2.default.useRef();
+	refInitialContent.current = initialContent;
+	_react2.default.useEffect(function () {
+		var eventId = _pagebuilder.EventBus.on("RELOAD_STATE", function () {
+			_setEditorState(createEditorState(refInitialContent.current));
+		});
+		return function () {
+			_pagebuilder.EventBus.off("RELOAD_STATE", eventId);
+		};
+	}, []);
 	var setEditorState = _react2.default.useCallback(function (newState) {
 		_setEditorState(function (oldState) {
 			if (typeof newState === "function") {
 				newState = newState(oldState);
 			}
-			setProp(function (_props) {
-				_props.content = (0, _draftJs.convertToRaw)(newState.getCurrentContent());
-			}, 500);
+			var oldRaw = (0, _draftJs.convertToRaw)(oldState.getCurrentContent());
+			var newRaw = (0, _draftJs.convertToRaw)(newState.getCurrentContent());
+			if (JSON.stringify(oldRaw) !== JSON.stringify(newRaw)) {
+				setProp(function (_props) {
+					return _props.content = newRaw;
+				}, 500);
+			}
 			return newState;
 		});
 	}, []);
