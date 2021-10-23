@@ -1,5 +1,5 @@
 import React from "react"
-import {RichUtils} from "draft-js"
+import {ExtendedRichUtils as RichUtils} from "../ExtendedRichUtils"
 import {EditorState} from "draft-js"
 import {DropdownItem} from "reactstrap"
 import {ToolbarButton, ToolbarDropdown, ToolbarSeparator} from "@zauberfisch/pagebuilder"
@@ -161,7 +161,6 @@ export function LinkControls({editorState, setEditorState}) {
 	}
 	return (
 		<React.Fragment>
-			<ToolbarSeparator />
 			<AddLinkButton {...{editorState, setEditorState, disabled: !canInsertLink}} />
 			<RemoveLinkButton {...{editorState, setEditorState, disabled: !canRemoveLink}} />
 		</React.Fragment>

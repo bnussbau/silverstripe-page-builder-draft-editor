@@ -3,10 +3,11 @@ import {DefaultDraftBlockRenderMap, Editor} from "draft-js"
 import Immutable from "immutable"
 import "draft-js/dist/Draft.css"
 import styles from "./DraftEditor.module.scss"
-import {ListControls, LinkControls, BlockStyleControls, InlineStyleControls, DebugControls, LinkModalExternal, LinkModalInternal, LinkModalEmail, LinkModalFile} from "./components"
+import {ListControls, LinkControls, BlockStyleControls, InlineStyleControls, AlignmentControls} from "./components"
 import {useEditorCallbacks, useEditorState} from "./hooks"
 
 import {ElementContainer, ToolbarPortalTop, ToolbarSeparator, CreateElementButton} from "@zauberfisch/pagebuilder"
+import {ALIGNMENT_DATA_KEY} from "./ExtendedRichUtils"
 // const ToolbarPortalRow = loadComponent("PageBuilder/ToolbarPortalRow")
 // const ToolbarButton = loadComponent("PageBuilder/ToolbarButton")
 
@@ -46,6 +47,20 @@ const blockRenderMap = DefaultDraftBlockRenderMap.merge(Immutable.Map({
 	},
 }))
 
+function blockStyleFn(contentBlock) {
+	const textAlignStyle = contentBlock.getData().get(ALIGNMENT_DATA_KEY)
+	switch (textAlignStyle) {
+		case "LEFT":
+			return styles.alignLeft
+		case "CENTER":
+			return styles.alignCenter
+		case "RIGHT":
+			return styles.alignRight
+		case "JUSTIFY":
+			return styles.alignJustify
+	}
+}
+
 export const DraftEditor = ({content, ...props}) => {
 	const refEditor = React.useRef()
 	const [editorState, setEditorState] = useEditorState(content)
@@ -58,10 +73,14 @@ export const DraftEditor = ({content, ...props}) => {
 			<ToolbarPortalTop>
 				<BlockStyleControls {...{editorState, setEditorState, blockTypes}} />
 				<ToolbarSeparator />
+				<AlignmentControls {...{editorState, setEditorState}} />
+				<ToolbarSeparator />
 				<InlineStyleControls {...{editorState, setEditorState, inlineStyles}} />
+				<ToolbarSeparator />
 				<ListControls {...{editorState, setEditorState}} />
+				<ToolbarSeparator />
 				<LinkControls {...{editorState, setEditorState}} />
-				<DebugControls {...{editorState, setEditorState}} />
+				{/*<DebugControls {...{editorState, setEditorState}} />*/}
 			</ToolbarPortalTop>
 			{/*<ToolbarPortalRow></ToolbarPortalRow>*/}
 			<div onClick={focusEditor} className={styles.editorContainer}>
@@ -70,6 +89,7 @@ export const DraftEditor = ({content, ...props}) => {
 						editorState,
 						customStyleMap,
 						blockRenderMap,
+						blockStyleFn,
 						onChange: setEditorState,
 						placeholder: "",
 						ref: refEditor,

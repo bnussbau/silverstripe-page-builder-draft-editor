@@ -76,7 +76,6 @@ export function LinkModalFile({onInsert, ...props}) {
 			{...props}
 			type="insert-link"
 			onInsert={(e) => {
-				console.log({onInsert: e})
 				onInsert(e)
 				return Promise.resolve()
 			}}

@@ -105,6 +105,8 @@ var _hooks = __webpack_require__("./client/src/hooks/index.js");
 
 var _pagebuilder = __webpack_require__(1);
 
+var _ExtendedRichUtils = __webpack_require__("./client/src/ExtendedRichUtils.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
@@ -124,6 +126,20 @@ var blockRenderMap = _draftJs.DefaultDraftBlockRenderMap.merge(_immutable2.defau
 		aliasedElements: ["div"]
 	}
 }));
+
+function blockStyleFn(contentBlock) {
+	var textAlignStyle = contentBlock.getData().get(_ExtendedRichUtils.ALIGNMENT_DATA_KEY);
+	switch (textAlignStyle) {
+		case "LEFT":
+			return _DraftEditorModule2.default.alignLeft;
+		case "CENTER":
+			return _DraftEditorModule2.default.alignCenter;
+		case "RIGHT":
+			return _DraftEditorModule2.default.alignRight;
+		case "JUSTIFY":
+			return _DraftEditorModule2.default.alignJustify;
+	}
+}
 
 var DraftEditor = function DraftEditor(_ref) {
 	var content = _ref.content,
@@ -149,10 +165,13 @@ var DraftEditor = function DraftEditor(_ref) {
 			null,
 			_react2.default.createElement(_components.BlockStyleControls, { editorState: editorState, setEditorState: setEditorState, blockTypes: blockTypes }),
 			_react2.default.createElement(_pagebuilder.ToolbarSeparator, null),
+			_react2.default.createElement(_components.AlignmentControls, { editorState: editorState, setEditorState: setEditorState }),
+			_react2.default.createElement(_pagebuilder.ToolbarSeparator, null),
 			_react2.default.createElement(_components.InlineStyleControls, { editorState: editorState, setEditorState: setEditorState, inlineStyles: inlineStyles }),
+			_react2.default.createElement(_pagebuilder.ToolbarSeparator, null),
 			_react2.default.createElement(_components.ListControls, { editorState: editorState, setEditorState: setEditorState }),
-			_react2.default.createElement(_components.LinkControls, { editorState: editorState, setEditorState: setEditorState }),
-			_react2.default.createElement(_components.DebugControls, { editorState: editorState, setEditorState: setEditorState })
+			_react2.default.createElement(_pagebuilder.ToolbarSeparator, null),
+			_react2.default.createElement(_components.LinkControls, { editorState: editorState, setEditorState: setEditorState })
 		),
 		_react2.default.createElement(
 			"div",
@@ -161,6 +180,7 @@ var DraftEditor = function DraftEditor(_ref) {
 				editorState: editorState,
 				customStyleMap: customStyleMap,
 				blockRenderMap: blockRenderMap,
+				blockStyleFn: blockStyleFn,
 				onChange: setEditorState,
 				placeholder: "",
 				ref: refEditor,
@@ -196,7 +216,107 @@ DraftEditor.craft = {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-module.exports = {"editorContainer":"_1YCUVvuKHmc_GotTASQ-aT","public-DraftEditor-content":"_2h4f2w2QzU7GKCRqXQ6-rS","link":"_3RxT1DMoc4nq7LHpAsSK3P"};
+module.exports = {"editorContainer":"_1YCUVvuKHmc_GotTASQ-aT","public-DraftEditor-content":"_2h4f2w2QzU7GKCRqXQ6-rS","link":"_3RxT1DMoc4nq7LHpAsSK3P","alignLeft":"beuOfshM4T93024qqEXFX","alignCenter":"_3N-mBlTWThz9aEiUCNwrvg","alignRight":"_2yS99vY1G3fnM51xAKoDQd","alignJustify":"_27JIwDEsGVYk7zIa55cXou"};
+
+/***/ }),
+
+/***/ "./client/src/ExtendedRichUtils.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.ExtendedRichUtils = exports.ALIGNMENT_DATA_KEY = exports.ALIGNMENTS = undefined;
+
+var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var ALIGNMENTS = exports.ALIGNMENTS = {
+	CENTER: "center",
+	JUSTIFY: "justify",
+	LEFT: "left",
+	RIGHT: "right"
+};
+
+var ALIGNMENT_DATA_KEY = exports.ALIGNMENT_DATA_KEY = "textAlignment";
+
+var ExtendedRichUtils = exports.ExtendedRichUtils = Object.assign({}, _draftJs.RichUtils, {
+	toggleAlignment: function toggleAlignment(editorState, alignment) {
+		var _getCurrentlySelected = getCurrentlySelectedBlock(editorState),
+		    content = _getCurrentlySelected.content,
+		    currentBlock = _getCurrentlySelected.currentBlock,
+		    hasAtomicBlock = _getCurrentlySelected.hasAtomicBlock,
+		    target = _getCurrentlySelected.target;
+
+		if (hasAtomicBlock) {
+			return editorState;
+		}
+
+		var blockData = currentBlock.getData();
+		var alignmentToSet = blockData && blockData.get(ALIGNMENT_DATA_KEY) === alignment ? undefined : alignment;
+
+		return _draftJs.EditorState.push(editorState, _draftJs.Modifier.mergeBlockData(content, target, _defineProperty({}, ALIGNMENT_DATA_KEY, alignmentToSet)), "change-block-data");
+	},
+	splitBlock: function splitBlock(editorState) {
+		var contentState = _draftJs.Modifier.splitBlock(editorState.getCurrentContent(), editorState.getSelection());
+		var splitState = _draftJs.EditorState.push(editorState, contentState, "split-block");
+
+		var _getCurrentlySelected2 = getCurrentlySelectedBlock(editorState),
+		    currentBlock = _getCurrentlySelected2.currentBlock;
+
+		var alignment = currentBlock.getData().get(ALIGNMENT_DATA_KEY);
+		if (alignment) {
+			return ExtendedRichUtils.toggleAlignment(splitState, alignment);
+		} else {
+			return splitState;
+		}
+	}
+});
+
+var getCurrentlySelectedBlock = function getCurrentlySelectedBlock(editorState) {
+	var selection = editorState.getSelection();
+	var startKey = selection.getStartKey();
+	var endKey = selection.getEndKey();
+	var content = editorState.getCurrentContent();
+	var target = selection;
+
+	if (startKey !== endKey && selection.getEndOffset() === 0) {
+		var blockBefore = content.getBlockBefore(endKey);
+		if (!blockBefore) {
+			throw new Error("Got unexpected null or undefined");
+		}
+
+		endKey = blockBefore.getKey();
+		target = target.merge({
+			anchorKey: startKey,
+			anchorOffset: selection.getStartOffset(),
+			focusKey: endKey,
+			focusOffset: blockBefore.getLength(),
+			isBackward: false
+		});
+	}
+
+	var hasAtomicBlock = content.getBlockMap().skipWhile(function (_, k) {
+		return k !== startKey;
+	}).takeWhile(function (_, k) {
+		return k !== endKey;
+	}).some(function (v) {
+		return v.getType() === "atomic";
+	});
+
+	var currentBlock = content.getBlockForKey(startKey);
+
+	return {
+		content: content,
+		currentBlock: currentBlock,
+		hasAtomicBlock: hasAtomicBlock,
+		target: target
+	};
+};
 
 /***/ }),
 
@@ -222,6 +342,63 @@ window.document.addEventListener("DOMContentLoaded", function () {
 
 /***/ }),
 
+/***/ "./client/src/components/AlignmentControls.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.AlignmentControls = AlignmentControls;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _ExtendedRichUtils = __webpack_require__("./client/src/ExtendedRichUtils.js");
+
+var _pagebuilder = __webpack_require__(1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function AlignmentControls(_ref) {
+	var editorState = _ref.editorState,
+	    setEditorState = _ref.setEditorState;
+
+	var blockData = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getData();
+	var currentAlignment = blockData && blockData.get(_ExtendedRichUtils.ALIGNMENT_DATA_KEY);
+	var align = _react2.default.useCallback(function (e, alignment) {
+		e.preventDefault();
+		setEditorState(function (_editorState) {
+			return _ExtendedRichUtils.ExtendedRichUtils.toggleAlignment(_editorState, alignment);
+		});
+	}, []);
+	var alignLeft = _react2.default.useCallback(function (e) {
+		return align(e, "LEFT");
+	}, []);
+	var alignCenter = _react2.default.useCallback(function (e) {
+		return align(e, "CENTER");
+	}, []);
+	var alignRight = _react2.default.useCallback(function (e) {
+		return align(e, "RIGHT");
+	}, []);
+	var alignJustify = _react2.default.useCallback(function (e) {
+		return align(e, "JUSTIFY");
+	}, []);
+	return _react2.default.createElement(
+		_react2.default.Fragment,
+		null,
+		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignLeft, active: currentAlignment === "LEFT", iconName: "mdiFormatAlignLeft" }),
+		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignCenter, active: currentAlignment === "CENTER", iconName: "mdiFormatAlignCenter" }),
+		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignRight, active: currentAlignment === "RIGHT", iconName: "mdiFormatAlignRight" }),
+		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignJustify, active: currentAlignment === "JUSTIFY", iconName: "mdiFormatAlignJustify" })
+	);
+}
+
+/***/ }),
+
 /***/ "./client/src/components/BlockStyleControls.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -237,7 +414,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
+var _ExtendedRichUtils = __webpack_require__("./client/src/ExtendedRichUtils.js");
 
 var _pagebuilder = __webpack_require__(1);
 
@@ -252,7 +429,7 @@ function BlockStyleControls(_ref) {
 	var setBlockType = _react2.default.useCallback(function (newBlockType) {
 		if (blockType !== newBlockType) {
 			setEditorState(function (_editorState) {
-				return _draftJs.RichUtils.toggleBlockType(_editorState, newBlockType);
+				return _ExtendedRichUtils.ExtendedRichUtils.toggleBlockType(_editorState, newBlockType);
 			});
 		}
 	}, [blockType]);
@@ -293,7 +470,7 @@ function DebugControls(_ref) {
 
 /***/ }),
 
-/***/ "./client/src/components/InlineStyleControlsButton.js":
+/***/ "./client/src/components/InlineStyleControls.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -311,7 +488,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
+var _ExtendedRichUtils = __webpack_require__("./client/src/ExtendedRichUtils.js");
 
 var _pagebuilder = __webpack_require__(1);
 
@@ -332,7 +509,7 @@ function InlineStyleControlsButton(_ref) {
 	var onClick = _react2.default.useCallback(function (e) {
 		e.preventDefault();
 		setEditorState(function (_editorState) {
-			return _draftJs.RichUtils.toggleInlineStyle(_editorState, styleName);
+			return _ExtendedRichUtils.ExtendedRichUtils.toggleInlineStyle(_editorState, styleName);
 		});
 	}, [styleName]);
 	return _react2.default.createElement(_pagebuilder.ToolbarButton, _extends({}, _extends({}, props, { onClick: onClick, active: active }), { style: { color: active ? activeColor : color, background: active ? activeBackground : background } }));
@@ -373,6 +550,8 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _ExtendedRichUtils = __webpack_require__("./client/src/ExtendedRichUtils.js");
+
 var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
 
 var _reactstrap = __webpack_require__(7);
@@ -392,7 +571,7 @@ function RemoveLinkButton(_ref) {
 		e.preventDefault();
 		var selection = editorState.getSelection();
 		if (!selection.isCollapsed()) {
-			setEditorState(_draftJs.RichUtils.toggleLink(editorState, selection, null));
+			setEditorState(_ExtendedRichUtils.ExtendedRichUtils.toggleLink(editorState, selection, null));
 		}
 	};
 	return _react2.default.createElement(_pagebuilder.ToolbarButton, { iconName: "mdiLinkOff", tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.RemoveLink"), onClick: removeLink, disabled: disabled });
@@ -450,7 +629,7 @@ function AddLinkButton(_ref2) {
 			var contentStateWithEntity = contentState.createEntity("LINK", "MUTABLE", linkData);
 			var entityKey = contentStateWithEntity.getLastCreatedEntityKey();
 			var newEditorState = _draftJs.EditorState.set(_editorState, { currentContent: contentStateWithEntity });
-			return _draftJs.RichUtils.toggleLink(newEditorState, newEditorState.getSelection(), entityKey);
+			return _ExtendedRichUtils.ExtendedRichUtils.toggleLink(newEditorState, newEditorState.getSelection(), entityKey);
 		});
 		setOpenModalId("");
 	}, [openModalId]);
@@ -504,7 +683,6 @@ function LinkControls(_ref5) {
 	return _react2.default.createElement(
 		_react2.default.Fragment,
 		null,
-		_react2.default.createElement(_pagebuilder.ToolbarSeparator, null),
 		_react2.default.createElement(AddLinkButton, { editorState: editorState, setEditorState: setEditorState, disabled: !canInsertLink }),
 		_react2.default.createElement(RemoveLinkButton, { editorState: editorState, setEditorState: setEditorState, disabled: !canRemoveLink })
 	);
@@ -535,7 +713,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _Injector = __webpack_require__(2);
 
-var _InsertLinkModal = __webpack_require__(3);
+var _InsertLinkModal = __webpack_require__(4);
 
 var _InsertMediaModal = __webpack_require__(5);
 
@@ -579,7 +757,6 @@ function LinkModalFile(_ref) {
 	return _react2.default.createElement(InjectableInsertMediaModal, _extends({}, props, {
 		type: "insert-link",
 		onInsert: function onInsert(e) {
-			console.log({ onInsert: e });
 			_onInsert(e);
 			return Promise.resolve();
 		},
@@ -606,7 +783,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
+var _ExtendedRichUtils = __webpack_require__("./client/src/ExtendedRichUtils.js");
 
 var _pagebuilder = __webpack_require__(1);
 
@@ -619,19 +796,18 @@ function ListControls(_ref) {
 	var blockType = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType();
 	var indent = _react2.default.useCallback(function () {
 		setEditorState(function (_editorState) {
-			return _draftJs.RichUtils.onTab(new KeyboardEvent("keydown", { keyCode: 9, which: 9, shiftKey: false }), _editorState, 4);
+			return _ExtendedRichUtils.ExtendedRichUtils.onTab(new KeyboardEvent("keydown", { keyCode: 9, which: 9, shiftKey: false }), _editorState, 4);
 		});
 	}, []);
 	var deIndent = _react2.default.useCallback(function () {
 		setEditorState(function (_editorState) {
-			return _draftJs.RichUtils.onTab(new KeyboardEvent("keydown", { keyCode: 9, which: 9, shiftKey: true }), _editorState, 4);
+			return _ExtendedRichUtils.ExtendedRichUtils.onTab(new KeyboardEvent("keydown", { keyCode: 9, which: 9, shiftKey: true }), _editorState, 4);
 		});
 	}, []);
 	var disabled = !["unordered-list-item", "ordered-list-item"].includes(blockType);
 	return _react2.default.createElement(
 		_react2.default.Fragment,
 		null,
-		_react2.default.createElement(_pagebuilder.ToolbarSeparator, null),
 		_react2.default.createElement(_pagebuilder.ToolbarButton, { disabled: disabled, tooltip: "Decrease Indent", onClick: deIndent, iconName: "mdiFormatIndentDecrease" }),
 		_react2.default.createElement(_pagebuilder.ToolbarButton, { disabled: disabled, tooltip: "Increase Indent", onClick: indent, iconName: "mdiFormatIndentIncrease" })
 	);
@@ -649,6 +825,18 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _AlignmentControls = __webpack_require__("./client/src/components/AlignmentControls.js");
+
+Object.keys(_AlignmentControls).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _AlignmentControls[key];
+    }
+  });
+});
+
 var _BlockStyleControls = __webpack_require__("./client/src/components/BlockStyleControls.js");
 
 Object.keys(_BlockStyleControls).forEach(function (key) {
@@ -661,14 +849,14 @@ Object.keys(_BlockStyleControls).forEach(function (key) {
   });
 });
 
-var _InlineStyleControlsButton = __webpack_require__("./client/src/components/InlineStyleControlsButton.js");
+var _InlineStyleControls = __webpack_require__("./client/src/components/InlineStyleControls.js");
 
-Object.keys(_InlineStyleControlsButton).forEach(function (key) {
+Object.keys(_InlineStyleControls).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function get() {
-      return _InlineStyleControlsButton[key];
+      return _InlineStyleControls[key];
     }
   });
 });
@@ -776,6 +964,8 @@ var _react2 = _interopRequireDefault(_react);
 
 var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
 
+var _ExtendedRichUtils = __webpack_require__("./client/src/ExtendedRichUtils.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function useEditorCallbacks(_ref) {
@@ -784,7 +974,7 @@ function useEditorCallbacks(_ref) {
 
 	return {
 		handleKeyCommand: _react2.default.useCallback(function (command, editorState) {
-			var newState = _draftJs.RichUtils.handleKeyCommand(editorState, command);
+			var newState = _ExtendedRichUtils.ExtendedRichUtils.handleKeyCommand(editorState, command);
 			if (newState) {
 				setEditorState(newState);
 				return true;
@@ -794,7 +984,7 @@ function useEditorCallbacks(_ref) {
 		keyBindingFn: _react2.default.useCallback(function (e) {
 			if (e.keyCode === 9) {
 					setEditorState(function (_editorState) {
-						return _draftJs.RichUtils.onTab(e, _editorState, 4);
+						return _ExtendedRichUtils.ExtendedRichUtils.onTab(e, _editorState, 4);
 					});
 					return;
 				}
@@ -829,7 +1019,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
 
-var _core = __webpack_require__(4);
+var _core = __webpack_require__(3);
 
 var _DraftEditorModule = __webpack_require__("./client/src/DraftEditor.module.scss");
 
@@ -24232,14 +24422,14 @@ module.exports = Injector;
 /***/ 3:
 /***/ (function(module, exports) {
 
-module.exports = InsertLinkModal;
+module.exports = CraftJsCore;
 
 /***/ }),
 
 /***/ 4:
 /***/ (function(module, exports) {
 
-module.exports = CraftJsCore;
+module.exports = InsertLinkModal;
 
 /***/ }),
 

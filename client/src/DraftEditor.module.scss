@@ -12,5 +12,21 @@
 		text-decoration: underline;
 		color: blue;
 	}
+
+	.alignLeft {
+		&, :global(.public-DraftStyleDefault-ltr) { text-align: left; }
+	}
+
+	.alignCenter {
+		&, :global(.public-DraftStyleDefault-ltr) { text-align: center; }
+	}
+
+	.alignRight {
+		&, :global(.public-DraftStyleDefault-ltr) { text-align: right; }
+	}
+
+	.alignJustify {
+		&, :global(.public-DraftStyleDefault-ltr) { text-align: justify; }
+	}
 }
 

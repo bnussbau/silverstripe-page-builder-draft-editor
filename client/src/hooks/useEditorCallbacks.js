@@ -1,5 +1,6 @@
 import React from "react"
-import {getDefaultKeyBinding, RichUtils} from "draft-js"
+import {getDefaultKeyBinding} from "draft-js"
+import {ExtendedRichUtils as RichUtils} from "../ExtendedRichUtils"
 
 
 export function useEditorCallbacks({setEditorState, refEditor}) {

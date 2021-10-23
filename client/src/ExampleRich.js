@@ -1,7 +1,8 @@
 "use strict"
 
 import React from "react"
-import {Editor, EditorState, RichUtils, getDefaultKeyBinding, convertToRaw} from "draft-js"
+import {Editor, EditorState, getDefaultKeyBinding, convertToRaw} from "draft-js"
+import {ExtendedRichUtils as RichUtils} from "./ExtendedRichUtils"
 import "draft-js/dist/Draft.css"
 
 class RichEditorExample extends React.Component {
@@ -12,12 +13,12 @@ class RichEditorExample extends React.Component {
 		this.focus = () => this.refs.editor.focus()
 		this.onChange = (editorState) => {
 			const content = this.state.editorState.getCurrentContent()
-			console.log({
-				raw: convertToRaw(content),
-				// json: convertToRaw(content).toString(),
-				// json: JSON.stringify(convertToRaw(content)),
-			})
-			console.log(JSON.stringify(convertToRaw(content)))
+			// console.log({
+			// 	raw: convertToRaw(content),
+			// 	// json: convertToRaw(content).toString(),
+			// 	// json: JSON.stringify(convertToRaw(content)),
+			// })
+			// console.log(JSON.stringify(convertToRaw(content)))
 			return this.setState({editorState})
 		}
 

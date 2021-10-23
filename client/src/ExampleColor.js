@@ -1,5 +1,6 @@
 import React from "react"
-import {Editor, EditorState, Modifier, RichUtils, getDefaultKeyBinding} from "draft-js"
+import {Editor, EditorState, Modifier, getDefaultKeyBinding} from "draft-js"
+import {ExtendedRichUtils as RichUtils} from "./ExtendedRichUtils"
 import RichEditorExample from "./ExampleRich"
 
 class ColorfulEditorExample extends React.Component {

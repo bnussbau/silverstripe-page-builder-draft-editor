@@ -1,5 +1,5 @@
 import React from "react"
-import {RichUtils} from "draft-js"
+import {ExtendedRichUtils as RichUtils} from "../ExtendedRichUtils"
 import {ToolbarSelect} from "@zauberfisch/pagebuilder"
 
 export function BlockStyleControls({editorState, setEditorState, blockTypes}) {

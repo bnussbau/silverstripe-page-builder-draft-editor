@@ -1,5 +1,5 @@
 import React from "react"
-import {RichUtils} from "draft-js"
+import {ExtendedRichUtils as RichUtils} from "../ExtendedRichUtils"
 import {ToolbarButton, ToolbarSeparator} from "@zauberfisch/pagebuilder"
 
 export function ListControls({editorState, setEditorState}) {
@@ -25,7 +25,6 @@ export function ListControls({editorState, setEditorState}) {
 	const disabled = !["unordered-list-item", "ordered-list-item"].includes(blockType)
 	return (
 		<React.Fragment>
-			<ToolbarSeparator />
 			<ToolbarButton disabled={disabled} tooltip={"Decrease Indent"} onClick={deIndent} iconName="mdiFormatIndentDecrease" />
 			<ToolbarButton disabled={disabled} tooltip={"Increase Indent"} onClick={indent} iconName="mdiFormatIndentIncrease" />
 		</React.Fragment>

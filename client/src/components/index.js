@@ -1,5 +1,6 @@
+export * from "./AlignmentControls"
 export * from "./BlockStyleControls"
-export * from "./InlineStyleControlsButton"
+export * from "./InlineStyleControls"
 export * from "./ListControls"
 export * from "./LinkControls"
 export * from "./LinkModals"
