@@ -2,8 +2,7 @@ import React from "react"
 import {ExtendedRichUtils as RichUtils} from "../ExtendedRichUtils"
 import {EditorState} from "draft-js"
 import {DropdownItem} from "reactstrap"
-import {ToolbarButton, ToolbarDropdown, ToolbarSeparator} from "@zauberfisch/pagebuilder"
-import {LinkModalEmail, LinkModalExternal, LinkModalFile, LinkModalInternal} from "./LinkModals"
+import {ToolbarButton, ToolbarDropdown, LinkModalEmail, LinkModalExternal, LinkModalFile, LinkModalInternal} from "@zauberfisch/pagebuilder"
 
 
 // 'EditorExternalLink' => [
