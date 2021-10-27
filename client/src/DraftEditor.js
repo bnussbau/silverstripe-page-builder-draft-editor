@@ -13,8 +13,8 @@ import {ALIGNMENT_DATA_KEY} from "./ExtendedRichUtils"
 
 // TODO this should be configurable by a silverstripe app
 const customStyleMap = {
-	MYCUSTOMTEST: {
-		color: "red",
+	COLOR_PINK: {
+		color: "deeppink",
 	},
 }
 // TODO this should be configurable by a silverstripe app
@@ -23,7 +23,7 @@ const inlineStyles = [
 	{tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic"},
 	{tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline"},
 	{tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant"},
-	{title: "Test", styleName: "MYCUSTOMTEST", color: "red", activeColor: "purple"},
+	{title: "Highlight", styleName: "COLOR_PINK", color: "deeppink"},
 	// {label: "Monospace", style: "CODE", iconName: "iconName"},
 ]
 // TODO this should be configurable by a silverstripe app

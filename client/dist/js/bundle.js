@@ -110,12 +110,12 @@ var _ExtendedRichUtils = __webpack_require__("./client/src/ExtendedRichUtils.js"
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var customStyleMap = {
-	MYCUSTOMTEST: {
-		color: "red"
+	COLOR_PINK: {
+		color: "deeppink"
 	}
 };
 
-var inlineStyles = [{ tooltip: "Bold", styleName: "BOLD", iconName: "mdiFormatBold" }, { tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic" }, { tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline" }, { tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant" }, { title: "Test", styleName: "MYCUSTOMTEST", color: "red", activeColor: "purple" }];
+var inlineStyles = [{ tooltip: "Bold", styleName: "BOLD", iconName: "mdiFormatBold" }, { tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic" }, { tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline" }, { tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant" }, { title: "Pink", styleName: "COLOR_PINK", color: "deeppink" }];
 
 var blockTypes = [{ iconName: "mdiText", title: "Paragraph", value: "unstyled" }, { iconName: "mdiFormatHeader1", title: "Heading 1", value: "header-one" }, { iconName: "mdiFormatHeader2", title: "Heading 2", value: "header-two" }, { iconName: "mdiFormatHeader3", title: "Heading 3", value: "header-three" }, { iconName: "mdiFormatHeader4", title: "Heading 4", value: "header-four" }, { iconName: "mdiFormatHeader5", title: "Heading 5", value: "header-five" }, { iconName: "mdiFormatHeader6", title: "Heading 6", value: "header-six" }, { iconName: "mdiFormatQuoteClose", title: "Blockquote", value: "blockquote" }, { iconName: "mdiFormatListBulleted", title: "Bullet list", value: "unordered-list-item" }, { iconName: "mdiFormatListNumbered", title: "Numbered list", value: "ordered-list-item" }, { iconName: "mdiCodeBraces", title: "Code", value: "code-block" }];
 var blockRenderMap = _draftJs.DefaultDraftBlockRenderMap.merge(_immutable2.default.Map({
