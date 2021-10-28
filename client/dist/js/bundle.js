@@ -115,7 +115,7 @@ var customStyleMap = {
 	}
 };
 
-var inlineStyles = [{ tooltip: "Bold", styleName: "BOLD", iconName: "mdiFormatBold" }, { tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic" }, { tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline" }, { tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant" }, { title: "Pink", styleName: "COLOR_PINK", color: "deeppink" }];
+var inlineStyles = [{ tooltip: "Bold", styleName: "BOLD", iconName: "mdiFormatBold" }, { tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic" }, { tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline" }, { tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant" }, { title: "Highlight", styleName: "COLOR_PINK", color: "deeppink" }];
 
 var blockTypes = [{ iconName: "mdiText", title: "Paragraph", value: "unstyled" }, { iconName: "mdiFormatHeader1", title: "Heading 1", value: "header-one" }, { iconName: "mdiFormatHeader2", title: "Heading 2", value: "header-two" }, { iconName: "mdiFormatHeader3", title: "Heading 3", value: "header-three" }, { iconName: "mdiFormatHeader4", title: "Heading 4", value: "header-four" }, { iconName: "mdiFormatHeader5", title: "Heading 5", value: "header-five" }, { iconName: "mdiFormatHeader6", title: "Heading 6", value: "header-six" }, { iconName: "mdiFormatQuoteClose", title: "Blockquote", value: "blockquote" }, { iconName: "mdiFormatListBulleted", title: "Bullet list", value: "unordered-list-item" }, { iconName: "mdiFormatListNumbered", title: "Numbered list", value: "ordered-list-item" }, { iconName: "mdiCodeBraces", title: "Code", value: "code-block" }];
 var blockRenderMap = _draftJs.DefaultDraftBlockRenderMap.merge(_immutable2.default.Map({
@@ -214,7 +214,7 @@ DraftEditor.craft = {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-module.exports = {"editorContainer":"_1YCUVvuKHmc_GotTASQ-aT","public-DraftEditor-content":"_2h4f2w2QzU7GKCRqXQ6-rS","link":"_3RxT1DMoc4nq7LHpAsSK3P","alignLeft":"beuOfshM4T93024qqEXFX","alignCenter":"_3N-mBlTWThz9aEiUCNwrvg","alignRight":"_2yS99vY1G3fnM51xAKoDQd","alignJustify":"_27JIwDEsGVYk7zIa55cXou"};
+module.exports = {"editorContainer":"_1YCUVvuKHmc_GotTASQ-aT","link":"_3RxT1DMoc4nq7LHpAsSK3P","alignLeft":"beuOfshM4T93024qqEXFX","alignCenter":"_3N-mBlTWThz9aEiUCNwrvg","alignRight":"_2yS99vY1G3fnM51xAKoDQd","alignJustify":"_27JIwDEsGVYk7zIa55cXou"};
 
 /***/ }),
 

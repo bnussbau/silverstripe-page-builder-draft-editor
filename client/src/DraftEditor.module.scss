@@ -2,10 +2,42 @@
 
 .editorContainer {
 	//background: white;
-	padding: 5px;
+	//padding: 5px;
 
-	.public-DraftEditor-content {
-		min-height: 100px;
+	p, ul, ol, h1, h2, h3, h4, h5, h6 {
+		margin: 0 0 20px;
+	}
+
+	h1 {
+		font-size: 28px;
+	}
+
+	h2 {
+		font-size: 26px;
+	}
+
+	h3 {
+		font-size: 24px;
+	}
+
+	h4 {
+		font-size: 22px;
+	}
+
+	h5 {
+		font-size: 20px;
+	}
+
+	h6 {
+		font-size: 18px;
+	}
+
+	:global(.public-DraftEditor-content) {
+		> div {
+			> :last-child {
+				margin: 0;
+			}
+		}
 	}
 
 	.link {
