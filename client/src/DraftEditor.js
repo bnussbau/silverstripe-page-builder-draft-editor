@@ -69,7 +69,7 @@ export const DraftEditor = ({content}) => {
 	// /admin/methodSchema/Modals/EditorEmailLink
 	// /admin/methodSchema/Modals/editorInternalLink
 	return (
-		<ElementContainer>
+		<ElementContainer padding={false}>
 			<ToolbarPortalTop>
 				<BlockStyleControls {...{editorState, setEditorState, blockTypes}} />
 				<ToolbarSeparator />

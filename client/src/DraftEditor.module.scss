@@ -1,8 +1,11 @@
 @import "variables";
 
 .editorContainer {
-	//background: white;
-	//padding: 5px;
+	background: white;
+	color: #566b8d;
+	padding: 10px;
+	//border-radius: .23rem;
+	//border: 1px solid #ced5e1;
 
 	p, ul, ol, h1, h2, h3, h4, h5, h6 {
 		margin: 0 0 20px;

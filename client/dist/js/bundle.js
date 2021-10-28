@@ -157,7 +157,7 @@ var DraftEditor = exports.DraftEditor = function DraftEditor(_ref) {
 
 	return _react2.default.createElement(
 		_pagebuilder.ElementContainer,
-		null,
+		{ padding: false },
 		_react2.default.createElement(
 			_pagebuilder.ToolbarPortalTop,
 			null,
