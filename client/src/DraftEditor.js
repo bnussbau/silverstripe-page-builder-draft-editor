@@ -104,7 +104,9 @@ export const DraftEditor = ({content}) => {
 	)
 }
 
-const defaultProps = {}
+const defaultProps = {
+	content: null,
+}
 
 DraftEditor.getTypeDisplayName = () => ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.DraftEditor")
 

@@ -191,7 +191,9 @@ var DraftEditor = exports.DraftEditor = function DraftEditor(_ref) {
 	);
 };
 
-var defaultProps = {};
+var defaultProps = {
+	content: null
+};
 
 DraftEditor.getTypeDisplayName = function () {
 	return ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.DraftEditor");
