@@ -11,7 +11,7 @@ if (typeof (ss) === "undefined" || typeof (ss.i18n) === "undefined") {
 		"ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkExternal": "External",
 		"ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkEmail": "Email",
 		"ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkFile": "File",
-		"ZAUBERFISCH_PAGEBUILDER_DraftEditor.Placeholder": "Write something ...",
+		"ZAUBERFISCH_PAGEBUILDER_DraftEditor.Placeholder": "Content",
 		"ZAUBERFISCH_PAGEBUILDER_DraftEditor.BlockType": "Format",
 		"ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignLeft": "Align left",
 		"ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignCenter": "Align center",
