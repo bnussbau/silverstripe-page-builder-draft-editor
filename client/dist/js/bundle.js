@@ -581,25 +581,7 @@ function AddLinkButton(_ref2) {
 	    disabled = _ref2.disabled,
 	    refCurrentLinkData = _ref2.refCurrentLinkData;
 
-	var linkTypes = _react2.default.useMemo(function () {
-		return [{
-			id: "Internal",
-			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkInternal"),
-			component: _pagebuilder.LinkModalInternal
-		}, {
-			id: "External",
-			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkExternal"),
-			component: _pagebuilder.LinkModalExternal
-		}, {
-			id: "Email",
-			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkEmail"),
-			component: _pagebuilder.LinkModalEmail
-		}, {
-			id: "File",
-			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkFile"),
-			component: _pagebuilder.LinkModalFile
-		}];
-	}, []);
+	var linkTypes = (0, _pagebuilder.useElementPropLinkTypes)();
 
 	var _React$useState = _react2.default.useState(""),
 	    _React$useState2 = _slicedToArray(_React$useState, 2),
@@ -613,15 +595,7 @@ function AddLinkButton(_ref2) {
 	var onClick = _react2.default.useCallback(function (e) {
 		setOpenModalId(e.target.dataset.modalid);
 	}, []);
-	var onInsert = _react2.default.useCallback(function (linkData) {
-		delete linkData.SecurityID;
-		delete linkData["action_insert"];
-		delete linkData.AssetEditorHeaderFieldGroup;
-		delete linkData.TitleHeader;
-		delete linkData.Editor;
-		delete linkData.FileSpecs;
-		linkData.Type = openModalId;
-
+	var onInsert = (0, _pagebuilder.useElementPropLinkInsertCallback)(function (linkData) {
 		setEditorState(function (_editorState) {
 			var contentState = _editorState.getCurrentContent();
 			var contentStateWithEntity = contentState.createEntity("LINK", "MUTABLE", linkData);
@@ -630,7 +604,7 @@ function AddLinkButton(_ref2) {
 			return _ExtendedRichUtils.ExtendedRichUtils.toggleLink(newEditorState, newEditorState.getSelection(), entityKey);
 		});
 		setOpenModalId("");
-	}, [openModalId]);
+	}, openModalId, []);
 	var onClosed = _react2.default.useCallback(function () {
 		return setOpenModalId("");
 	}, []);

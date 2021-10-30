@@ -2,44 +2,7 @@ import React from "react"
 import {ExtendedRichUtils as RichUtils} from "../ExtendedRichUtils"
 import {EditorState} from "draft-js"
 import {DropdownItem} from "reactstrap"
-import {ToolbarButton, ToolbarDropdown, LinkModalEmail, LinkModalExternal, LinkModalFile, LinkModalInternal} from "@zauberfisch/pagebuilder"
-
-
-// 'EditorExternalLink' => [
-// 	'schemaUrl' => $this->Link('methodSchema/Modals/EditorExternalLink'),
-// ],
-// 'EditorEmailLink' => [
-// 	'schemaUrl' => $this->Link('methodSchema/Modals/EditorEmailLink'),
-// ],
-
-// const [showURLInput, setShowURLInput] = React.useState(false)
-//
-// const promptForLink = (e) => {
-// 	// FormBuilderModal
-// 	// InsertLinkModal
-// 	// Loading
-// 	e.preventDefault()
-// 	const selection = editorState.getSelection()
-// 	if (!selection.isCollapsed()) {
-// 		const contentState = editorState.getCurrentContent()
-// 		const startKey = editorState.getSelection().getStartKey()
-// 		const startOffset = editorState.getSelection().getStartOffset()
-// 		const blockWithLinkAtBeginning = contentState.getBlockForKey(startKey)
-// 		const linkKey = blockWithLinkAtBeginning.getEntityAt(startOffset)
-//
-// 		let url = ""
-// 		if (linkKey) {
-// 			const linkInstance = contentState.getEntity(linkKey)
-// 			url = linkInstance.getData().url
-// 		}
-// 		setShowURLInput(true)
-//
-// 		// FIXME
-// 		//  setTimeout(() => this.refs.url.focus(), 0)
-// 	}
-// }
-// import {loadComponent} from "lib/Injector"
-// import {InsertLinkModal, createInsertLinkModal} from "containers/InsertLinkModal/InsertLinkModal"
+import {useElementPropLinkTypes, useElementPropLinkInsertCallback, ToolbarButton, ToolbarDropdown} from "@zauberfisch/pagebuilder"
 
 function RemoveLinkButton({editorState, setEditorState, disabled}) {
 	const removeLink = (e) => {
@@ -53,28 +16,7 @@ function RemoveLinkButton({editorState, setEditorState, disabled}) {
 }
 
 function AddLinkButton({editorState, setEditorState, disabled, refCurrentLinkData}) {
-	const linkTypes = React.useMemo(() => [
-		{
-			id: "Internal",
-			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkInternal"),
-			component: LinkModalInternal,
-		},
-		{
-			id: "External",
-			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkExternal"),
-			component: LinkModalExternal,
-		},
-		{
-			id: "Email",
-			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkEmail"),
-			component: LinkModalEmail,
-		},
-		{
-			id: "File",
-			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkFile"),
-			component: LinkModalFile,
-		},
-	], [])
+	const linkTypes = useElementPropLinkTypes()
 	const [openModalId, setOpenModalId] = React.useState("")
 	// const [previousLinkData, setPreviousLinkData] = React.useState({})
 	const onMouseDown = React.useCallback((e) => {
@@ -89,19 +31,8 @@ function AddLinkButton({editorState, setEditorState, disabled, refCurrentLinkDat
 	const onClick = React.useCallback((e) => {
 		setOpenModalId(e.target.dataset.modalid)
 	}, [])
-	const onInsert = React.useCallback((linkData) => {
-		delete linkData.SecurityID
-		delete linkData["action_insert"]
-		delete linkData.AssetEditorHeaderFieldGroup
-		delete linkData.TitleHeader
-		delete linkData.Editor
-		delete linkData.FileSpecs
-		linkData.Type = openModalId
-		// linkData.Type =
-		// setEditorState(RichUtils.toggleLink(editorState, selection, null))
+	const onInsert = useElementPropLinkInsertCallback(linkData => {
 		setEditorState(_editorState => {
-			// const {editorState, urlValue} = this.state
-			// const linkData = {url: urlValue}
 			const contentState = _editorState.getCurrentContent()
 			const contentStateWithEntity = contentState.createEntity(
 				"LINK",
@@ -118,7 +49,7 @@ function AddLinkButton({editorState, setEditorState, disabled, refCurrentLinkDat
 		})
 		setOpenModalId("")
 		// TODO focus editor
-	}, [openModalId])
+	}, openModalId, [])
 	const onClosed = React.useCallback(() => setOpenModalId(""), [])
 
 	return (
