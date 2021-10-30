@@ -72,7 +72,8 @@ function AddLinkButton({editorState, setEditorState, disabled, refCurrentLinkDat
 export function LinkControls({editorState, setEditorState}) {
 	const selection = editorState.getSelection()
 	let canInsertLink = false
-	let canRemoveLink = false
+	// let canRemoveLink = false
+	let canRemoveLink = true
 	// const refCurrentLinkData = React.createRef()
 	if (!selection.isCollapsed()) {
 		canInsertLink = true

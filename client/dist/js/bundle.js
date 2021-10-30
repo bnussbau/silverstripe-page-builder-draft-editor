@@ -639,7 +639,8 @@ function LinkControls(_ref5) {
 
 	var selection = editorState.getSelection();
 	var canInsertLink = false;
-	var canRemoveLink = false;
+
+	var canRemoveLink = true;
 
 	if (!selection.isCollapsed()) {
 		canInsertLink = true;
