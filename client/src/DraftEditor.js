@@ -6,27 +6,17 @@ import styles from "./DraftEditor.module.scss"
 import {ListControls, LinkControls, BlockStyleControls, InlineStyleControls, AlignmentControls} from "./components"
 import {useEditorCallbacks, useEditorState} from "./hooks"
 
-import {ElementContainer, ToolbarPortalTop, ToolbarSeparator, CreateElementButton} from "@zauberfisch/pagebuilder"
+import {ElementContainer, ToolbarPortalTop, ToolbarSeparator} from "@zauberfisch/pagebuilder"
 import {ALIGNMENT_DATA_KEY} from "./ExtendedRichUtils"
-// const ToolbarPortalRow = loadComponent("PageBuilder/ToolbarPortalRow")
-// const ToolbarButton = loadComponent("PageBuilder/ToolbarButton")
 
-// TODO this should be configurable by a silverstripe app
-const customStyleMap = {
-	COLOR_PINK: {
-		color: "deeppink",
-	},
-}
-// TODO this should be configurable by a silverstripe app
-const inlineStyles = [
+const defaultCustomStyleMap = {}
+const defaultInlineStyles = [
 	{tooltip: "Bold", styleName: "BOLD", iconName: "mdiFormatBold"},
 	{tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic"},
 	{tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline"},
 	{tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant"},
-	{title: "Highlight", styleName: "COLOR_PINK", color: "deeppink"},
 	// {label: "Monospace", style: "CODE", iconName: "iconName"},
 ]
-// TODO this should be configurable by a silverstripe app
 const blockTypes = [
 	{iconName: "mdiText", title: "Paragraph", value: "unstyled"},
 	{iconName: "mdiFormatHeader1", title: "Heading 1", value: "header-one"},
@@ -38,7 +28,7 @@ const blockTypes = [
 	{iconName: "mdiFormatQuoteClose", title: "Blockquote", value: "blockquote"},
 	{iconName: "mdiFormatListBulleted", title: "Bullet list", value: "unordered-list-item"},
 	{iconName: "mdiFormatListNumbered", title: "Numbered list", value: "ordered-list-item"},
-	{iconName: "mdiCodeBraces", title: "Code", value: "code-block"},
+	// {iconName: "mdiCodeBraces", title: "Code", value: "code-block"},
 ]
 const blockRenderMap = DefaultDraftBlockRenderMap.merge(Immutable.Map({
 	"unstyled": {
@@ -61,13 +51,14 @@ function blockStyleFn(contentBlock) {
 	}
 }
 
-export const DraftEditor = ({content}) => {
+export const DraftEditor = ({content, pageBuilderSpecs}) => {
 	const refEditor = React.useRef()
 	const [editorState, setEditorState] = useEditorState(content)
 	const {handleKeyCommand, keyBindingFn, focusEditor, handleReturn} = useEditorCallbacks({setEditorState, refEditor})
-	// /admin/methodSchema/Modals/EditorExternalLink
-	// /admin/methodSchema/Modals/EditorEmailLink
-	// /admin/methodSchema/Modals/editorInternalLink
+	const specCacheKey = [JSON.stringify(pageBuilderSpecs)]
+
+	const inlineStyles = React.useMemo(() => [...defaultInlineStyles, ...(pageBuilderSpecs.extraInlineStyles || [])], specCacheKey)
+	const customStyleMap = React.useMemo(() => ({...defaultCustomStyleMap, ...(pageBuilderSpecs.extraCustomStyleMap || {})}), specCacheKey)
 	return (
 		<ElementContainer padding={false}>
 			<ToolbarPortalTop>
@@ -80,7 +71,6 @@ export const DraftEditor = ({content}) => {
 				<ListControls {...{editorState, setEditorState}} />
 				<ToolbarSeparator />
 				<LinkControls {...{editorState, setEditorState}} />
-				{/*<DebugControls {...{editorState, setEditorState}} />*/}
 			</ToolbarPortalTop>
 			{/*<ToolbarPortalRow></ToolbarPortalRow>*/}
 			<div onClick={focusEditor} className={styles.editorContainer}>
@@ -104,33 +94,9 @@ export const DraftEditor = ({content}) => {
 	)
 }
 
-const defaultProps = {
-	content: null,
-}
-
-DraftEditor.getTypeDisplayName = () => ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.DraftEditor")
-
-function CreateButton(props) {
-	return <CreateElementButton {...props} element={<DraftEditor />} iconName="mdiCardTextOutline" />
-}
-
-DraftEditor.craft = {
-	props: defaultProps,
-	related: {
-		CreateButton,
+DraftEditor.pageBuilderSpecs = {
+	defaultProps: {
+		content: null,
 	},
+	iconName: "mdiCardTextOutline",
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

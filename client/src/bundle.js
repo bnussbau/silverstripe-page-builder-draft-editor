@@ -5,7 +5,6 @@ import {DraftEditor} from "./DraftEditor"
 
 window.document.addEventListener("DOMContentLoaded", () => {
 	Injector.component.registerMany({
-		// PageBuilderField,
-		"PageBuilder/DraftEditor": DraftEditor,
+		"zauberfisch\\PageBuilderDraftEditor\\Element\\DraftEditor": DraftEditor,
 	})
 })

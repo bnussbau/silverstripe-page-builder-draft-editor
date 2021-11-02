@@ -109,15 +109,11 @@ var _ExtendedRichUtils = __webpack_require__("./client/src/ExtendedRichUtils.js"
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var customStyleMap = {
-	COLOR_PINK: {
-		color: "deeppink"
-	}
-};
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-var inlineStyles = [{ tooltip: "Bold", styleName: "BOLD", iconName: "mdiFormatBold" }, { tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic" }, { tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline" }, { tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant" }, { title: "Highlight", styleName: "COLOR_PINK", color: "deeppink" }];
-
-var blockTypes = [{ iconName: "mdiText", title: "Paragraph", value: "unstyled" }, { iconName: "mdiFormatHeader1", title: "Heading 1", value: "header-one" }, { iconName: "mdiFormatHeader2", title: "Heading 2", value: "header-two" }, { iconName: "mdiFormatHeader3", title: "Heading 3", value: "header-three" }, { iconName: "mdiFormatHeader4", title: "Heading 4", value: "header-four" }, { iconName: "mdiFormatHeader5", title: "Heading 5", value: "header-five" }, { iconName: "mdiFormatHeader6", title: "Heading 6", value: "header-six" }, { iconName: "mdiFormatQuoteClose", title: "Blockquote", value: "blockquote" }, { iconName: "mdiFormatListBulleted", title: "Bullet list", value: "unordered-list-item" }, { iconName: "mdiFormatListNumbered", title: "Numbered list", value: "ordered-list-item" }, { iconName: "mdiCodeBraces", title: "Code", value: "code-block" }];
+var defaultCustomStyleMap = {};
+var defaultInlineStyles = [{ tooltip: "Bold", styleName: "BOLD", iconName: "mdiFormatBold" }, { tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic" }, { tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline" }, { tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant" }];
+var blockTypes = [{ iconName: "mdiText", title: "Paragraph", value: "unstyled" }, { iconName: "mdiFormatHeader1", title: "Heading 1", value: "header-one" }, { iconName: "mdiFormatHeader2", title: "Heading 2", value: "header-two" }, { iconName: "mdiFormatHeader3", title: "Heading 3", value: "header-three" }, { iconName: "mdiFormatHeader4", title: "Heading 4", value: "header-four" }, { iconName: "mdiFormatHeader5", title: "Heading 5", value: "header-five" }, { iconName: "mdiFormatHeader6", title: "Heading 6", value: "header-six" }, { iconName: "mdiFormatQuoteClose", title: "Blockquote", value: "blockquote" }, { iconName: "mdiFormatListBulleted", title: "Bullet list", value: "unordered-list-item" }, { iconName: "mdiFormatListNumbered", title: "Numbered list", value: "ordered-list-item" }];
 var blockRenderMap = _draftJs.DefaultDraftBlockRenderMap.merge(_immutable2.default.Map({
 	"unstyled": {
 		element: "p",
@@ -140,7 +136,8 @@ function blockStyleFn(contentBlock) {
 }
 
 var DraftEditor = exports.DraftEditor = function DraftEditor(_ref) {
-	var content = _ref.content;
+	var content = _ref.content,
+	    pageBuilderSpecs = _ref.pageBuilderSpecs;
 
 	var refEditor = _react2.default.useRef();
 
@@ -155,6 +152,14 @@ var DraftEditor = exports.DraftEditor = function DraftEditor(_ref) {
 	    focusEditor = _useEditorCallbacks.focusEditor,
 	    handleReturn = _useEditorCallbacks.handleReturn;
 
+	var specCacheKey = [JSON.stringify(pageBuilderSpecs)];
+
+	var inlineStyles = _react2.default.useMemo(function () {
+		return [].concat(defaultInlineStyles, _toConsumableArray(pageBuilderSpecs.extraInlineStyles || []));
+	}, specCacheKey);
+	var customStyleMap = _react2.default.useMemo(function () {
+		return _extends({}, defaultCustomStyleMap, pageBuilderSpecs.extraCustomStyleMap || {});
+	}, specCacheKey);
 	return _react2.default.createElement(
 		_pagebuilder.ElementContainer,
 		{ padding: false },
@@ -191,23 +196,11 @@ var DraftEditor = exports.DraftEditor = function DraftEditor(_ref) {
 	);
 };
 
-var defaultProps = {
-	content: null
-};
-
-DraftEditor.getTypeDisplayName = function () {
-	return ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.DraftEditor");
-};
-
-function CreateButton(props) {
-	return _react2.default.createElement(_pagebuilder.CreateElementButton, _extends({}, props, { element: _react2.default.createElement(DraftEditor, null), iconName: "mdiCardTextOutline" }));
-}
-
-DraftEditor.craft = {
-	props: defaultProps,
-	related: {
-		CreateButton: CreateButton
-	}
+DraftEditor.pageBuilderSpecs = {
+	defaultProps: {
+		content: null
+	},
+	iconName: "mdiCardTextOutline"
 };
 
 /***/ }),
@@ -336,7 +329,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 window.document.addEventListener("DOMContentLoaded", function () {
 	_Injector2.default.component.registerMany({
-		"PageBuilder/DraftEditor": _DraftEditor.DraftEditor
+		"zauberfisch\\PageBuilderDraftEditor\\Element\\DraftEditor": _DraftEditor.DraftEditor
 	});
 });
 
@@ -433,39 +426,7 @@ function BlockStyleControls(_ref) {
 			});
 		}
 	}, [blockType]);
-	return _react2.default.createElement(_pagebuilder.ToolbarSelect, { showSelectedTitle: false, value: blockType, onChange: setBlockType, options: blockTypes, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.BlockType") });
-}
-
-/***/ }),
-
-/***/ "./client/src/components/DebugControls.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-exports.DebugControls = DebugControls;
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
-
-var _pagebuilder = __webpack_require__(1);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function DebugControls(_ref) {
-	var editorState = _ref.editorState;
-
-	var logState = function logState() {
-		console.log((0, _draftJs.convertToRaw)(editorState.getCurrentContent()));
-	};
-	return _react2.default.createElement(_pagebuilder.ToolbarButton, { title: "Log", onClick: logState });
+	return _react2.default.createElement(_pagebuilder.ToolbarSelect, { showSelectedTitle: true, value: blockType, onChange: setBlockType, options: blockTypes, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.BlockType") });
 }
 
 /***/ }),
@@ -776,18 +737,6 @@ Object.keys(_LinkControls).forEach(function (key) {
     enumerable: true,
     get: function get() {
       return _LinkControls[key];
-    }
-  });
-});
-
-var _DebugControls = __webpack_require__("./client/src/components/DebugControls.js");
-
-Object.keys(_DebugControls).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _DebugControls[key];
     }
   });
 });

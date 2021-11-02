@@ -4,7 +4,6 @@ if (typeof (ss) === "undefined" || typeof (ss.i18n) === "undefined") {
 	}
 } else {
 	ss.i18n.addDictionary("en", {
-		"ZAUBERFISCH_PAGEBUILDER_DraftEditor.DraftEditor": "Draft Editor",
 		"ZAUBERFISCH_PAGEBUILDER_DraftEditor.RemoveLink": "Remove Link",
 		"ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLink": "Add Link",
 		"ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLinkInternal": "Internal",

@@ -13,6 +13,6 @@ export function BlockStyleControls({editorState, setEditorState, blockTypes}) {
 		}
 	}, [blockType])
 	return (
-		<ToolbarSelect showSelectedTitle={false} value={blockType} onChange={setBlockType} options={blockTypes} tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.BlockType")} />
+		<ToolbarSelect showSelectedTitle={true} value={blockType} onChange={setBlockType} options={blockTypes} tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.BlockType")} />
 	)
 }
