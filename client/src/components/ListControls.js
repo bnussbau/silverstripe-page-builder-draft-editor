@@ -25,8 +25,8 @@ export function ListControls({editorState, setEditorState}) {
 	const disabled = !["unordered-list-item", "ordered-list-item"].includes(blockType)
 	return (
 		<React.Fragment>
-			<ToolbarButton disabled={disabled} tooltip={"Decrease Indent"} onClick={deIndent} iconName="mdiFormatIndentDecrease" />
-			<ToolbarButton disabled={disabled} tooltip={"Increase Indent"} onClick={indent} iconName="mdiFormatIndentIncrease" />
+			<ToolbarButton disabled={disabled} tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.DecreaseIndent")} onClick={deIndent} iconName="mdiFormatIndentDecrease" />
+			<ToolbarButton disabled={disabled} tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.IncreaseIndent")} onClick={indent} iconName="mdiFormatIndentIncrease" />
 		</React.Fragment>
 	)
 }

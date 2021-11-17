@@ -112,8 +112,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var defaultCustomStyleMap = {};
-var defaultInlineStyles = [{ tooltip: "Bold", styleName: "BOLD", iconName: "mdiFormatBold" }, { tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic" }, { tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline" }, { tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant" }];
-var blockTypes = [{ iconName: "mdiText", title: "Paragraph", value: "unstyled" }, { iconName: "mdiFormatHeader1", title: "Heading 1", value: "header-one" }, { iconName: "mdiFormatHeader2", title: "Heading 2", value: "header-two" }, { iconName: "mdiFormatHeader3", title: "Heading 3", value: "header-three" }, { iconName: "mdiFormatHeader4", title: "Heading 4", value: "header-four" }, { iconName: "mdiFormatHeader5", title: "Heading 5", value: "header-five" }, { iconName: "mdiFormatHeader6", title: "Heading 6", value: "header-six" }, { iconName: "mdiFormatQuoteClose", title: "Blockquote", value: "blockquote" }, { iconName: "mdiFormatListBulleted", title: "Bullet list", value: "unordered-list-item" }, { iconName: "mdiFormatListNumbered", title: "Numbered list", value: "ordered-list-item" }];
 var blockRenderMap = _draftJs.DefaultDraftBlockRenderMap.merge(_immutable2.default.Map({
 	"unstyled": {
 		element: "p",
@@ -139,6 +137,12 @@ var DraftEditor = exports.DraftEditor = function DraftEditor(_ref) {
 	var content = _ref.content,
 	    pageBuilderSpecs = _ref.pageBuilderSpecs;
 
+	var defaultInlineStyles = _react2.default.useMemo(function () {
+		return [{ tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Bold"), styleName: "BOLD", iconName: "mdiFormatBold" }, { tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Italic"), styleName: "ITALIC", iconName: "mdiFormatItalic" }, { tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Underline"), styleName: "UNDERLINE", iconName: "mdiFormatUnderline" }, { tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Strikethrough"), styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant" }];
+	}, []);
+	var blockTypes = _react2.default.useMemo(function () {
+		return [{ title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Paragraph"), iconName: "mdiText", value: "unstyled" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading1"), iconName: "mdiFormatHeader1", value: "header-one" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading2"), iconName: "mdiFormatHeader2", value: "header-two" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading3"), iconName: "mdiFormatHeader3", value: "header-three" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading4"), iconName: "mdiFormatHeader4", value: "header-four" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading5"), iconName: "mdiFormatHeader5", value: "header-five" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading6"), iconName: "mdiFormatHeader6", value: "header-six" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Blockquote"), iconName: "mdiFormatQuoteClose", value: "blockquote" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.BulletList"), iconName: "mdiFormatListBulleted", value: "unordered-list-item" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.NumberedList"), iconName: "mdiFormatListNumbered", value: "ordered-list-item" }];
+	}, []);
 	var refEditor = _react2.default.useRef();
 
 	var _useEditorState = (0, _hooks.useEditorState)(content),
@@ -153,9 +157,8 @@ var DraftEditor = exports.DraftEditor = function DraftEditor(_ref) {
 	    handleReturn = _useEditorCallbacks.handleReturn;
 
 	var specCacheKey = [JSON.stringify(pageBuilderSpecs)];
-
 	var inlineStyles = _react2.default.useMemo(function () {
-		return [].concat(defaultInlineStyles, _toConsumableArray(pageBuilderSpecs.extraInlineStyles || []));
+		return [].concat(_toConsumableArray(defaultInlineStyles), _toConsumableArray(pageBuilderSpecs.extraInlineStyles || []));
 	}, specCacheKey);
 	var customStyleMap = _react2.default.useMemo(function () {
 		return _extends({}, defaultCustomStyleMap, pageBuilderSpecs.extraCustomStyleMap || {});
@@ -664,8 +667,8 @@ function ListControls(_ref) {
 	return _react2.default.createElement(
 		_react2.default.Fragment,
 		null,
-		_react2.default.createElement(_pagebuilder.ToolbarButton, { disabled: disabled, tooltip: "Decrease Indent", onClick: deIndent, iconName: "mdiFormatIndentDecrease" }),
-		_react2.default.createElement(_pagebuilder.ToolbarButton, { disabled: disabled, tooltip: "Increase Indent", onClick: indent, iconName: "mdiFormatIndentIncrease" })
+		_react2.default.createElement(_pagebuilder.ToolbarButton, { disabled: disabled, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.DecreaseIndent"), onClick: deIndent, iconName: "mdiFormatIndentDecrease" }),
+		_react2.default.createElement(_pagebuilder.ToolbarButton, { disabled: disabled, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.IncreaseIndent"), onClick: indent, iconName: "mdiFormatIndentIncrease" })
 	);
 }
 

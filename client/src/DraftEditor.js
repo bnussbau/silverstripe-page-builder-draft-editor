@@ -10,26 +10,6 @@ import {ElementContainer, ToolbarPortalTop, ToolbarSeparator} from "@zauberfisch
 import {ALIGNMENT_DATA_KEY} from "./ExtendedRichUtils"
 
 const defaultCustomStyleMap = {}
-const defaultInlineStyles = [
-	{tooltip: "Bold", styleName: "BOLD", iconName: "mdiFormatBold"},
-	{tooltip: "Italic", styleName: "ITALIC", iconName: "mdiFormatItalic"},
-	{tooltip: "Underline", styleName: "UNDERLINE", iconName: "mdiFormatUnderline"},
-	{tooltip: "Strikethrough", styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant"},
-	// {label: "Monospace", style: "CODE", iconName: "iconName"},
-]
-const blockTypes = [
-	{iconName: "mdiText", title: "Paragraph", value: "unstyled"},
-	{iconName: "mdiFormatHeader1", title: "Heading 1", value: "header-one"},
-	{iconName: "mdiFormatHeader2", title: "Heading 2", value: "header-two"},
-	{iconName: "mdiFormatHeader3", title: "Heading 3", value: "header-three"},
-	{iconName: "mdiFormatHeader4", title: "Heading 4", value: "header-four"},
-	{iconName: "mdiFormatHeader5", title: "Heading 5", value: "header-five"},
-	{iconName: "mdiFormatHeader6", title: "Heading 6", value: "header-six"},
-	{iconName: "mdiFormatQuoteClose", title: "Blockquote", value: "blockquote"},
-	{iconName: "mdiFormatListBulleted", title: "Bullet list", value: "unordered-list-item"},
-	{iconName: "mdiFormatListNumbered", title: "Numbered list", value: "ordered-list-item"},
-	// {iconName: "mdiCodeBraces", title: "Code", value: "code-block"},
-]
 const blockRenderMap = DefaultDraftBlockRenderMap.merge(Immutable.Map({
 	"unstyled": {
 		element: "p",
@@ -52,11 +32,30 @@ function blockStyleFn(contentBlock) {
 }
 
 export const DraftEditor = ({content, pageBuilderSpecs}) => {
+	const defaultInlineStyles = React.useMemo(() => [
+		{tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Bold"), styleName: "BOLD", iconName: "mdiFormatBold"},
+		{tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Italic"), styleName: "ITALIC", iconName: "mdiFormatItalic"},
+		{tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Underline"), styleName: "UNDERLINE", iconName: "mdiFormatUnderline"},
+		{tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Strikethrough"), styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant"},
+		// {label: "Monospace", style: "CODE", iconName: "iconName"},
+	], [])
+	const blockTypes = React.useMemo(() => [
+		{title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Paragraph"), iconName: "mdiText", value: "unstyled"},
+		{title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading1"), iconName: "mdiFormatHeader1", value: "header-one"},
+		{title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading2"), iconName: "mdiFormatHeader2", value: "header-two"},
+		{title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading3"), iconName: "mdiFormatHeader3", value: "header-three"},
+		{title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading4"), iconName: "mdiFormatHeader4", value: "header-four"},
+		{title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading5"), iconName: "mdiFormatHeader5", value: "header-five"},
+		{title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading6"), iconName: "mdiFormatHeader6", value: "header-six"},
+		{title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Blockquote"), iconName: "mdiFormatQuoteClose", value: "blockquote"},
+		{title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.BulletList"), iconName: "mdiFormatListBulleted", value: "unordered-list-item"},
+		{title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.NumberedList"), iconName: "mdiFormatListNumbered", value: "ordered-list-item"},
+		// {iconName: "mdiCodeBraces", title: "Code", value: "code-block"},
+	], [])
 	const refEditor = React.useRef()
 	const [editorState, setEditorState] = useEditorState(content)
 	const {handleKeyCommand, keyBindingFn, focusEditor, handleReturn} = useEditorCallbacks({setEditorState, refEditor})
 	const specCacheKey = [JSON.stringify(pageBuilderSpecs)]
-
 	const inlineStyles = React.useMemo(() => [...defaultInlineStyles, ...(pageBuilderSpecs.extraInlineStyles || [])], specCacheKey)
 	const customStyleMap = React.useMemo(() => ({...defaultCustomStyleMap, ...(pageBuilderSpecs.extraCustomStyleMap || {})}), specCacheKey)
 	return (
