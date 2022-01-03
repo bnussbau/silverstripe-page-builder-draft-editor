@@ -570,8 +570,6 @@ var _ExtendedRichUtils = __webpack_require__("./client/src/ExtendedRichUtils.js"
 
 var _draftJs = __webpack_require__("./node_modules/draft-js/lib/Draft.js");
 
-var _reactstrap = __webpack_require__(5);
-
 var _pagebuilder = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -588,21 +586,44 @@ function RemoveLinkButton(_ref) {
 			setEditorState(_ExtendedRichUtils.ExtendedRichUtils.toggleLink(editorState, selection, null));
 		}
 	};
-	return _react2.default.createElement(_pagebuilder.ToolbarButton, { iconName: "mdiLinkOff", tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.RemoveLink"), onClick: removeLink, disabled: disabled });
+	return _react2.default.createElement(_pagebuilder.ToolbarButtonComponent, { iconLeft: { iconName: "mdiLinkOff" }, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.RemoveLink"), onClick: removeLink, disabled: disabled });
 }
 
 function AddLinkButton(_ref2) {
 	var editorState = _ref2.editorState,
 	    setEditorState = _ref2.setEditorState,
 	    disabled = _ref2.disabled,
-	    refCurrentLinkData = _ref2.refCurrentLinkData;
+	    linkValue = _ref2.linkValue;
 
 	var linkTypes = (0, _pagebuilder.useElementPropLinkTypes)();
-	return _react2.default.createElement(
-		"span",
-		null,
-		"FIXME"
-	);
+	var onChange = _react2.default.useCallback(function (linkData) {
+		setEditorState(function (_editorState) {
+			var contentState = _editorState.getCurrentContent();
+			var contentStateWithEntity = contentState.createEntity("LINK", "MUTABLE", linkData);
+			var entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+			var newEditorState = _draftJs.EditorState.set(_editorState, { currentContent: contentStateWithEntity });
+			return _ExtendedRichUtils.ExtendedRichUtils.toggleLink(newEditorState, newEditorState.getSelection(), entityKey);
+		});
+	}, []);
+	return _react2.default.createElement(_pagebuilder.ToolbarLinkSelectComponent, {
+		onChange: onChange,
+		linkTypes: linkTypes,
+		value: linkValue,
+		addDropDownProps: {
+			buttonProps: {
+				children: "",
+				toolbar: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLink"),
+				iconLeft: { iconName: "mdiLinkPlus" },
+				iconRight: {}
+			}
+		},
+		editButtonProps: {
+			children: "",
+			toolbar: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.EditLink"),
+			iconLeft: { iconName: "mdiLink" }
+		},
+		disabled: disabled
+	});
 }
 
 function LinkControls(_ref3) {
@@ -614,6 +635,7 @@ function LinkControls(_ref3) {
 
 	var canRemoveLink = true;
 
+	var linkValue = undefined;
 	if (!selection.isCollapsed()) {
 		canInsertLink = true;
 		var contentState = editorState.getCurrentContent();
@@ -623,12 +645,15 @@ function LinkControls(_ref3) {
 		var linkKey = blockWithLinkAtBeginning.getEntityAt(startOffset);
 		if (linkKey) {
 			canRemoveLink = true;
+			var linkInstance = contentState.getEntity(linkKey);
+			linkValue = linkInstance.getData();
+			console.log({ linkValue: linkValue });
 		} else {}
 	}
 	return _react2.default.createElement(
 		_react2.default.Fragment,
 		null,
-		_react2.default.createElement(AddLinkButton, { editorState: editorState, setEditorState: setEditorState, disabled: !canInsertLink }),
+		_react2.default.createElement(AddLinkButton, { editorState: editorState, setEditorState: setEditorState, linkValue: linkValue, disabled: !canInsertLink }),
 		_react2.default.createElement(RemoveLinkButton, { editorState: editorState, setEditorState: setEditorState, disabled: !canRemoveLink })
 	);
 }
@@ -24280,13 +24305,6 @@ module.exports = CraftJsCore;
 /***/ (function(module, exports) {
 
 module.exports = ReactDom;
-
-/***/ }),
-
-/***/ 5:
-/***/ (function(module, exports) {
-
-module.exports = Reactstrap;
 
 /***/ })
 

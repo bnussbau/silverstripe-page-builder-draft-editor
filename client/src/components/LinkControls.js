@@ -1,11 +1,10 @@
 import React from "react"
 import {ExtendedRichUtils as RichUtils} from "../ExtendedRichUtils"
 import {EditorState} from "draft-js"
-import {DropdownItem} from "reactstrap"
 import {
 	useElementPropLinkTypes,
 	// useElementPropLinkInsertCallback,
-	ToolbarButton,
+	ToolbarButtonComponent,
 	ToolbarLinkSelectComponent,
 	ToolbarDropdown,
 	FormDropdownComponent,
@@ -20,24 +19,51 @@ function RemoveLinkButton({editorState, setEditorState, disabled}) {
 			setEditorState(RichUtils.toggleLink(editorState, selection, null))
 		}
 	}
-	return <ToolbarButton iconName="mdiLinkOff" tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.RemoveLink")} onClick={removeLink} disabled={disabled} />
+	return <ToolbarButtonComponent iconLeft={{iconName: "mdiLinkOff"}} tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.RemoveLink")} onClick={removeLink} disabled={disabled} />
 }
 
-function AddLinkButton({editorState, setEditorState, disabled, refCurrentLinkData}) {
+function AddLinkButton({editorState, setEditorState, disabled, linkValue}) {
 	const linkTypes = useElementPropLinkTypes()
+	const onChange = React.useCallback((linkData) => {
+		setEditorState(_editorState => {
+			const contentState = _editorState.getCurrentContent()
+			const contentStateWithEntity = contentState.createEntity(
+				"LINK",
+				"MUTABLE",
+				linkData,
+			)
+			const entityKey = contentStateWithEntity.getLastCreatedEntityKey()
+			const newEditorState = EditorState.set(_editorState, {currentContent: contentStateWithEntity})
+			return RichUtils.toggleLink(
+				newEditorState,
+				newEditorState.getSelection(),
+				entityKey,
+			)
+		})
+		// TODO focus editor
+	}, [])
 	return (
-		<span>FIXME</span>
-		// <ToolbarLinkSelectComponent {...{
-		// 	onChange,
-		// 	onChangeType,
-		// 	linkTypes,
-		// 	linkTypeValue = "",
-		// 	value = {},
-		// 	addDropDownProps = {},
-		// 	editButtonProps = {},
-		// 	disabled = false,
-		// 	id,
-		// }}/>
+		<ToolbarLinkSelectComponent {...{
+			onChange,
+			linkTypes,
+			value: linkValue,
+			addDropDownProps: {
+				buttonProps: {
+					children: "",
+					toolbar: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLink"),
+					iconLeft: {iconName: "mdiLinkPlus"},
+					iconRight: {},
+				},
+			},
+			editButtonProps: {
+				children: "",
+				toolbar: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.EditLink"),
+				iconLeft: {iconName: "mdiLink"},
+			},
+			disabled,
+			// tooltip={} iconName="mdiLink"
+			// id,
+		}} />
 	)
 }
 
@@ -109,12 +135,16 @@ function AddLinkButton({editorState, setEditorState, disabled, refCurrentLinkDat
 // 	)
 // }
 
-export function LinkControls({editorState, setEditorState}) {
+export function LinkControls({
+	                             editorState, setEditorState,
+                             },
+) {
 	const selection = editorState.getSelection()
 	let canInsertLink = false
 	// let canRemoveLink = false
 	let canRemoveLink = true
 	// const refCurrentLinkData = React.createRef()
+	let linkValue = undefined
 	if (!selection.isCollapsed()) {
 		canInsertLink = true
 		const contentState = editorState.getCurrentContent()
@@ -124,6 +154,9 @@ export function LinkControls({editorState, setEditorState}) {
 		const linkKey = blockWithLinkAtBeginning.getEntityAt(startOffset)
 		if (linkKey) {
 			canRemoveLink = true
+			const linkInstance = contentState.getEntity(linkKey)
+			linkValue = linkInstance.getData()
+			console.log({linkValue})
 			// const linkInstance = contentState.getEntity(linkKey)
 			// refCurrentLinkData.current = linkInstance.getData()
 		} else {
@@ -132,7 +165,7 @@ export function LinkControls({editorState, setEditorState}) {
 	}
 	return (
 		<React.Fragment>
-			<AddLinkButton {...{editorState, setEditorState, disabled: !canInsertLink}} />
+			<AddLinkButton {...{editorState, setEditorState, linkValue, disabled: !canInsertLink}} />
 			<RemoveLinkButton {...{editorState, setEditorState, disabled: !canRemoveLink}} />
 		</React.Fragment>
 	)
