@@ -1,6 +1,6 @@
 import React from "react"
 import {ExtendedRichUtils as RichUtils} from "../ExtendedRichUtils"
-import {ToolbarButton, ToolbarSeparator} from "@zauberfisch/pagebuilder"
+import {ToolbarButtonComponent} from "@zauberfisch/pagebuilder"
 
 export function ListControls({editorState, setEditorState}) {
 	const blockType = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType()
@@ -25,8 +25,8 @@ export function ListControls({editorState, setEditorState}) {
 	const disabled = !["unordered-list-item", "ordered-list-item"].includes(blockType)
 	return (
 		<React.Fragment>
-			<ToolbarButton disabled={disabled} tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.DecreaseIndent")} onClick={deIndent} iconName="mdiFormatIndentDecrease" />
-			<ToolbarButton disabled={disabled} tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.IncreaseIndent")} onClick={indent} iconName="mdiFormatIndentIncrease" />
+			<ToolbarButtonComponent disabled={disabled} tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.DecreaseIndent")} onClick={deIndent} iconLeft={{iconName: "mdiFormatIndentDecrease"}} />
+			<ToolbarButtonComponent disabled={disabled} tooltip={ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.IncreaseIndent")} onClick={indent} iconLeft={{iconName: "mdiFormatIndentIncrease"}} />
 		</React.Fragment>
 	)
 }

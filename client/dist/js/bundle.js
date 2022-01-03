@@ -114,8 +114,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var defaultCustomStyleMap = {};
 var blockRenderMap = _draftJs.DefaultDraftBlockRenderMap.merge(_immutable2.default.Map({
 	"unstyled": {
-		element: "p",
-		aliasedElements: ["div"]
+		element: "div",
+		aliasedElements: ["p"]
 	}
 }));
 
@@ -138,10 +138,60 @@ var DraftEditor = exports.DraftEditor = function DraftEditor(_ref) {
 	    pageBuilderSpecs = _ref.pageBuilderSpecs;
 
 	var defaultInlineStyles = _react2.default.useMemo(function () {
-		return [{ tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Bold"), styleName: "BOLD", iconName: "mdiFormatBold" }, { tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Italic"), styleName: "ITALIC", iconName: "mdiFormatItalic" }, { tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Underline"), styleName: "UNDERLINE", iconName: "mdiFormatUnderline" }, { tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Strikethrough"), styleName: "STRIKETHROUGH", iconName: "mdiFormatStrikethroughVariant" }];
+		return [{ tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Bold"), styleName: "BOLD", iconLeft: { iconName: "mdiFormatBold" } }, { tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Italic"), styleName: "ITALIC", iconLeft: { iconName: "mdiFormatItalic" } }, { tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Underline"), styleName: "UNDERLINE", iconLeft: { iconName: "mdiFormatUnderline" } }, { tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Strikethrough"), styleName: "STRIKETHROUGH", iconLeft: { iconName: "mdiFormatStrikethroughVariant" } }];
 	}, []);
 	var blockTypes = _react2.default.useMemo(function () {
-		return [{ title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Paragraph"), iconName: "mdiText", value: "unstyled" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading1"), iconName: "mdiFormatHeader1", value: "header-one" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading2"), iconName: "mdiFormatHeader2", value: "header-two" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading3"), iconName: "mdiFormatHeader3", value: "header-three" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading4"), iconName: "mdiFormatHeader4", value: "header-four" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading5"), iconName: "mdiFormatHeader5", value: "header-five" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading6"), iconName: "mdiFormatHeader6", value: "header-six" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Blockquote"), iconName: "mdiFormatQuoteClose", value: "blockquote" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.BulletList"), iconName: "mdiFormatListBulleted", value: "unordered-list-item" }, { title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.NumberedList"), iconName: "mdiFormatListNumbered", value: "ordered-list-item" }];
+		return [{
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Paragraph"),
+			children: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Paragraph"),
+
+			value: "unstyled"
+		}, {
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading1"),
+			children: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading1"),
+
+			value: "header-one"
+		}, {
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading2"),
+			children: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading2"),
+
+			value: "header-two"
+		}, {
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading3"),
+			children: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading3"),
+
+			value: "header-three"
+		}, {
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading4"),
+			children: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading4"),
+
+			value: "header-four"
+		}, {
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading5"),
+			children: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading5"),
+
+			value: "header-five"
+		}, {
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading6"),
+			children: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Heading6"),
+
+			value: "header-six"
+		}, {
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Blockquote"),
+			children: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.Blockquote"),
+
+			value: "blockquote"
+		}, {
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.BulletList"),
+			children: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.BulletList"),
+
+			value: "unordered-list-item"
+		}, {
+			title: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.NumberedList"),
+			children: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.NumberedList"),
+
+			value: "ordered-list-item"
+		}];
 	}, []);
 	var refEditor = _react2.default.useRef();
 
@@ -386,10 +436,10 @@ function AlignmentControls(_ref) {
 	return _react2.default.createElement(
 		_react2.default.Fragment,
 		null,
-		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignLeft, active: currentAlignment === "LEFT", iconName: "mdiFormatAlignLeft", tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignLeft") }),
-		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignCenter, active: currentAlignment === "CENTER", iconName: "mdiFormatAlignCenter", tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignCenter") }),
-		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignRight, active: currentAlignment === "RIGHT", iconName: "mdiFormatAlignRight", tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignRight") }),
-		_react2.default.createElement(_pagebuilder.ToolbarButton, { onClick: alignJustify, active: currentAlignment === "JUSTIFY", iconName: "mdiFormatAlignJustify", tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignJustify") })
+		_react2.default.createElement(_pagebuilder.ToolbarButtonComponent, { onClick: alignLeft, active: currentAlignment === "LEFT", iconLeft: { iconName: "mdiFormatAlignLeft" }, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignLeft") }),
+		_react2.default.createElement(_pagebuilder.ToolbarButtonComponent, { onClick: alignCenter, active: currentAlignment === "CENTER", iconLeft: { iconName: "mdiFormatAlignCenter" }, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignCenter") }),
+		_react2.default.createElement(_pagebuilder.ToolbarButtonComponent, { onClick: alignRight, active: currentAlignment === "RIGHT", iconLeft: { iconName: "mdiFormatAlignRight" }, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignRight") }),
+		_react2.default.createElement(_pagebuilder.ToolbarButtonComponent, { onClick: alignJustify, active: currentAlignment === "JUSTIFY", iconLeft: { iconName: "mdiFormatAlignJustify" }, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AlignJustify") })
 	);
 }
 
@@ -422,14 +472,16 @@ function BlockStyleControls(_ref) {
 	    blockTypes = _ref.blockTypes;
 
 	var blockType = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType();
-	var setBlockType = _react2.default.useCallback(function (newBlockType) {
+	var setBlockType = _react2.default.useCallback(function (e, newBlockType) {
 		if (blockType !== newBlockType) {
 			setEditorState(function (_editorState) {
 				return _ExtendedRichUtils.ExtendedRichUtils.toggleBlockType(_editorState, newBlockType);
 			});
 		}
 	}, [blockType]);
-	return _react2.default.createElement(_pagebuilder.ToolbarSelect, { showSelectedTitle: true, value: blockType, onChange: setBlockType, options: blockTypes, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.BlockType") });
+	return _react2.default.createElement(_pagebuilder.ToolbarSelectComponent, { showSelectedTitle: true, value: blockType, onChange: setBlockType, options: blockTypes, buttonProps: {
+			tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.BlockType")
+		} });
 }
 
 /***/ }),
@@ -468,7 +520,10 @@ function InlineStyleControlsButton(_ref) {
 	    background = _ref.background,
 	    activeColor = _ref.activeColor,
 	    activeBackground = _ref.activeBackground,
-	    props = _objectWithoutProperties(_ref, ["styleName", "setEditorState", "active", "color", "background", "activeColor", "activeBackground"]);
+	    tooltip = _ref.tooltip,
+	    iconLeft = _ref.iconLeft,
+	    iconRight = _ref.iconRight,
+	    props = _objectWithoutProperties(_ref, ["styleName", "setEditorState", "active", "color", "background", "activeColor", "activeBackground", "tooltip", "iconLeft", "iconRight"]);
 
 	var onClick = _react2.default.useCallback(function (e) {
 		e.preventDefault();
@@ -476,7 +531,7 @@ function InlineStyleControlsButton(_ref) {
 			return _ExtendedRichUtils.ExtendedRichUtils.toggleInlineStyle(_editorState, styleName);
 		});
 	}, [styleName]);
-	return _react2.default.createElement(_pagebuilder.ToolbarButton, _extends({}, _extends({}, props, { onClick: onClick, active: active }), { style: { color: active ? activeColor : color, background: active ? activeBackground : background } }));
+	return _react2.default.createElement(_pagebuilder.ToolbarButtonComponent, _extends({ onClick: onClick, active: active, tooltip: tooltip, iconLeft: iconLeft, iconRight: iconRight }, { style: { color: active ? activeColor : color, background: active ? activeBackground : background } }));
 }
 
 function InlineStyleControls(_ref2) {
@@ -488,8 +543,8 @@ function InlineStyleControls(_ref2) {
 	return _react2.default.createElement(
 		_react2.default.Fragment,
 		null,
-		inlineStyles.map(function (inlineStyle) {
-			return _react2.default.createElement(InlineStyleControlsButton, _extends({ active: currentStyle.has(inlineStyle.styleName) }, _extends({}, inlineStyle, { editorState: editorState, setEditorState: setEditorState })));
+		inlineStyles.map(function (inlineStyle, i) {
+			return _react2.default.createElement(InlineStyleControlsButton, _extends({ key: "" + inlineStyle.styleName + i, active: currentStyle.has(inlineStyle.styleName) }, _extends({}, inlineStyle, { editorState: editorState, setEditorState: setEditorState })));
 		})
 	);
 }
@@ -505,9 +560,6 @@ function InlineStyleControls(_ref2) {
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 exports.LinkControls = LinkControls;
 
 var _react = __webpack_require__(0);
@@ -546,60 +598,16 @@ function AddLinkButton(_ref2) {
 	    refCurrentLinkData = _ref2.refCurrentLinkData;
 
 	var linkTypes = (0, _pagebuilder.useElementPropLinkTypes)();
-
-	var _React$useState = _react2.default.useState(""),
-	    _React$useState2 = _slicedToArray(_React$useState, 2),
-	    openModalId = _React$useState2[0],
-	    setOpenModalId = _React$useState2[1];
-
-	var onMouseDown = _react2.default.useCallback(function (e) {
-		e.preventDefault();
-	}, []);
-
-	var onClick = _react2.default.useCallback(function (e) {
-		setOpenModalId(e.target.dataset.modalid);
-	}, []);
-	var onInsert = (0, _pagebuilder.useElementPropLinkInsertCallback)(function (linkData) {
-		setEditorState(function (_editorState) {
-			var contentState = _editorState.getCurrentContent();
-			var contentStateWithEntity = contentState.createEntity("LINK", "MUTABLE", linkData);
-			var entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-			var newEditorState = _draftJs.EditorState.set(_editorState, { currentContent: contentStateWithEntity });
-			return _ExtendedRichUtils.ExtendedRichUtils.toggleLink(newEditorState, newEditorState.getSelection(), entityKey);
-		});
-		setOpenModalId("");
-	}, openModalId, []);
-	var onClosed = _react2.default.useCallback(function () {
-		return setOpenModalId("");
-	}, []);
-
 	return _react2.default.createElement(
-		_react2.default.Fragment,
+		"span",
 		null,
-		_react2.default.createElement(
-			_pagebuilder.ToolbarDropdown,
-			{ tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.AddLink"), iconName: "mdiLink", disabled: disabled },
-			linkTypes.map(function (_ref3) {
-				var title = _ref3.title,
-				    id = _ref3.id;
-				return _react2.default.createElement(
-					_reactstrap.DropdownItem,
-					{ "data-modalid": id, onMouseDown: onMouseDown, onClick: onClick, style: { padding: "0 10px" } },
-					title
-				);
-			})
-		),
-		linkTypes.map(function (_ref4) {
-			var id = _ref4.id,
-			    component = _ref4.component;
-			return _react2.default.createElement(component, { key: id, fileAttributes: {}, onInsert: onInsert, onClosed: onClosed, isOpen: openModalId === id });
-		})
+		"FIXME"
 	);
 }
 
-function LinkControls(_ref5) {
-	var editorState = _ref5.editorState,
-	    setEditorState = _ref5.setEditorState;
+function LinkControls(_ref3) {
+	var editorState = _ref3.editorState,
+	    setEditorState = _ref3.setEditorState;
 
 	var selection = editorState.getSelection();
 	var canInsertLink = false;
@@ -667,8 +675,8 @@ function ListControls(_ref) {
 	return _react2.default.createElement(
 		_react2.default.Fragment,
 		null,
-		_react2.default.createElement(_pagebuilder.ToolbarButton, { disabled: disabled, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.DecreaseIndent"), onClick: deIndent, iconName: "mdiFormatIndentDecrease" }),
-		_react2.default.createElement(_pagebuilder.ToolbarButton, { disabled: disabled, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.IncreaseIndent"), onClick: indent, iconName: "mdiFormatIndentIncrease" })
+		_react2.default.createElement(_pagebuilder.ToolbarButtonComponent, { disabled: disabled, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.DecreaseIndent"), onClick: deIndent, iconLeft: { iconName: "mdiFormatIndentDecrease" } }),
+		_react2.default.createElement(_pagebuilder.ToolbarButtonComponent, { disabled: disabled, tooltip: ss.i18n._t("ZAUBERFISCH_PAGEBUILDER_DraftEditor.IncreaseIndent"), onClick: indent, iconLeft: { iconName: "mdiFormatIndentIncrease" } })
 	);
 }
 
