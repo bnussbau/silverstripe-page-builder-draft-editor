@@ -12,8 +12,8 @@ import {ALIGNMENT_DATA_KEY} from "./ExtendedRichUtils"
 const defaultCustomStyleMap = {}
 const blockRenderMap = DefaultDraftBlockRenderMap.merge(Immutable.Map({
 	"unstyled": {
-		element: "div",
-		aliasedElements: ["p"],
+		element: "p",
+		aliasedElements: ["div"],
 	},
 }))
 

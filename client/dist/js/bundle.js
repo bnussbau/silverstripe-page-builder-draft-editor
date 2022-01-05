@@ -114,8 +114,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var defaultCustomStyleMap = {};
 var blockRenderMap = _draftJs.DefaultDraftBlockRenderMap.merge(_immutable2.default.Map({
 	"unstyled": {
-		element: "div",
-		aliasedElements: ["p"]
+		element: "p",
+		aliasedElements: ["div"]
 	}
 }));
 
