@@ -210,7 +210,6 @@ var DraftEditor = exports.DraftEditor = function DraftEditor(_ref) {
 	var inlineStyles = _react2.default.useMemo(function () {
 		return [].concat(_toConsumableArray(defaultInlineStyles), _toConsumableArray(pageBuilderSpecs.extraInlineStyles || []));
 	}, specCacheKey);
-	console.log({ extraInlineStyles: pageBuilderSpecs.extraInlineStyles, inlineStyles: inlineStyles });
 	var customStyleMap = _react2.default.useMemo(function () {
 		return _extends({}, defaultCustomStyleMap, pageBuilderSpecs.extraCustomStyleMap || {});
 	}, specCacheKey);
@@ -535,7 +534,6 @@ function InlineStyleControlsButton(_ref) {
 	}, [styleName]);
 	var allProps = { onClick: onClick, active: active, tooltip: tooltip, iconLeft: iconLeft, iconRight: iconRight, children: children };
 	allProps.style = { color: active ? activeColor : color, background: active ? activeBackground : background };
-	console.log("InlineStyleControlsButton", allProps);
 	return _react2.default.createElement(_pagebuilder.ToolbarButtonComponent, allProps);
 }
 
@@ -549,7 +547,6 @@ function InlineStyleControls(_ref2) {
 		_react2.default.Fragment,
 		null,
 		inlineStyles.map(function (inlineStyle, i) {
-			console.log({ inlineStyle: inlineStyle });
 			return _react2.default.createElement(InlineStyleControlsButton, _extends({ key: "" + inlineStyle.styleName + i, active: currentStyle.has(inlineStyle.styleName) }, _extends({}, inlineStyle, { editorState: editorState, setEditorState: setEditorState })));
 		})
 	);
@@ -653,7 +650,6 @@ function LinkControls(_ref3) {
 			canRemoveLink = true;
 			var linkInstance = contentState.getEntity(linkKey);
 			linkValue = linkInstance.getData();
-			console.log({ linkValue: linkValue });
 		} else {}
 	}
 	return _react2.default.createElement(

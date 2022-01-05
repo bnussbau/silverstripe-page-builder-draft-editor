@@ -156,7 +156,6 @@ export function LinkControls({
 			canRemoveLink = true
 			const linkInstance = contentState.getEntity(linkKey)
 			linkValue = linkInstance.getData()
-			console.log({linkValue})
 			// const linkInstance = contentState.getEntity(linkKey)
 			// refCurrentLinkData.current = linkInstance.getData()
 		} else {

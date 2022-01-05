@@ -12,7 +12,6 @@ function InlineStyleControlsButton({styleName, setEditorState, active, color, ba
 	}, [styleName])
 	const allProps = {onClick, active, tooltip, iconLeft, iconRight, children}
 	allProps.style = {color: active ? activeColor : color, background: active ? activeBackground : background}
-	console.log("InlineStyleControlsButton", allProps)
 	return (
 		<ToolbarButtonComponent {...allProps} />
 	)
@@ -23,7 +22,6 @@ export function InlineStyleControls({editorState, setEditorState, inlineStyles})
 	return (
 		<React.Fragment>
 			{inlineStyles.map((inlineStyle, i) => {
-					console.log({inlineStyle})
 					return (
 						<InlineStyleControlsButton key={`${inlineStyle.styleName}${i}`} active={currentStyle.has(inlineStyle.styleName)} {...{...inlineStyle, editorState, setEditorState}} />
 					)
