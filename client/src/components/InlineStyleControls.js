@@ -2,7 +2,7 @@ import React from "react"
 import {ExtendedRichUtils as RichUtils} from "../ExtendedRichUtils"
 import {ToolbarButtonComponent} from "@zauberfisch/pagebuilder"
 
-function InlineStyleControlsButton({styleName, setEditorState, active, color, background, activeColor, activeBackground, tooltip, iconLeft, iconRight, ...props}) {
+function InlineStyleControlsButton({styleName, setEditorState, active, color, background, activeColor, activeBackground, tooltip, iconLeft, iconRight, children, ...props}) {
 	const onClick = React.useCallback((e) => {
 		e.preventDefault()
 		setEditorState(_editorState => RichUtils.toggleInlineStyle(
@@ -10,8 +10,11 @@ function InlineStyleControlsButton({styleName, setEditorState, active, color, ba
 			styleName,
 		))
 	}, [styleName])
+	const allProps = {onClick, active, tooltip, iconLeft, iconRight, children}
+	allProps.style = {color: active ? activeColor : color, background: active ? activeBackground : background}
+	console.log("InlineStyleControlsButton", allProps)
 	return (
-		<ToolbarButtonComponent {...{onClick, active, tooltip, iconLeft, iconRight}} style={{color: active ? activeColor : color, background: active ? activeBackground : background}} />
+		<ToolbarButtonComponent {...allProps} />
 	)
 }
 

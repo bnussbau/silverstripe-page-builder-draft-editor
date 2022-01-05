@@ -523,7 +523,8 @@ function InlineStyleControlsButton(_ref) {
 	    tooltip = _ref.tooltip,
 	    iconLeft = _ref.iconLeft,
 	    iconRight = _ref.iconRight,
-	    props = _objectWithoutProperties(_ref, ["styleName", "setEditorState", "active", "color", "background", "activeColor", "activeBackground", "tooltip", "iconLeft", "iconRight"]);
+	    children = _ref.children,
+	    props = _objectWithoutProperties(_ref, ["styleName", "setEditorState", "active", "color", "background", "activeColor", "activeBackground", "tooltip", "iconLeft", "iconRight", "children"]);
 
 	var onClick = _react2.default.useCallback(function (e) {
 		e.preventDefault();
@@ -531,7 +532,10 @@ function InlineStyleControlsButton(_ref) {
 			return _ExtendedRichUtils.ExtendedRichUtils.toggleInlineStyle(_editorState, styleName);
 		});
 	}, [styleName]);
-	return _react2.default.createElement(_pagebuilder.ToolbarButtonComponent, _extends({ onClick: onClick, active: active, tooltip: tooltip, iconLeft: iconLeft, iconRight: iconRight }, { style: { color: active ? activeColor : color, background: active ? activeBackground : background } }));
+	var allProps = { onClick: onClick, active: active, tooltip: tooltip, iconLeft: iconLeft, iconRight: iconRight, children: children };
+	allProps.style = { color: active ? activeColor : color, background: active ? activeBackground : background };
+	console.log("InlineStyleControlsButton", allProps);
+	return _react2.default.createElement(_pagebuilder.ToolbarButtonComponent, allProps);
 }
 
 function InlineStyleControls(_ref2) {
