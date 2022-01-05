@@ -22,9 +22,12 @@ export function InlineStyleControls({editorState, setEditorState, inlineStyles})
 	const currentStyle = editorState.getCurrentInlineStyle()
 	return (
 		<React.Fragment>
-			{inlineStyles.map((inlineStyle, i) => (
-					<InlineStyleControlsButton key={`${inlineStyle.styleName}${i}`} active={currentStyle.has(inlineStyle.styleName)} {...{...inlineStyle, editorState, setEditorState}} />
-				),
+			{inlineStyles.map((inlineStyle, i) => {
+					console.log({inlineStyle})
+					return (
+						<InlineStyleControlsButton key={`${inlineStyle.styleName}${i}`} active={currentStyle.has(inlineStyle.styleName)} {...{...inlineStyle, editorState, setEditorState}} />
+					)
+				},
 			)}
 		</React.Fragment>
 	)

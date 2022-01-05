@@ -107,6 +107,7 @@ export const DraftEditor = ({content, pageBuilderSpecs}) => {
 	const {handleKeyCommand, keyBindingFn, focusEditor, handleReturn} = useEditorCallbacks({setEditorState, refEditor})
 	const specCacheKey = [JSON.stringify(pageBuilderSpecs)]
 	const inlineStyles = React.useMemo(() => [...defaultInlineStyles, ...(pageBuilderSpecs.extraInlineStyles || [])], specCacheKey)
+	console.log({extraInlineStyles: pageBuilderSpecs.extraInlineStyles, inlineStyles})
 	const customStyleMap = React.useMemo(() => ({...defaultCustomStyleMap, ...(pageBuilderSpecs.extraCustomStyleMap || {})}), specCacheKey)
 	return (
 		<ElementContainer padding={false}>
