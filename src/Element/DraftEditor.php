@@ -9,7 +9,7 @@ use zauberfisch\PageBuilder\Form\PageBuilderConfig;
 
 class DraftEditor extends Element {
 	public function getValueForFrontend(PageBuilderConfig $config): \stdClass {
-		$element = parent::getValueForFrontend();
+		$element = parent::getValueForFrontend($config);
 		if (isset($element->props->content->entityMap)) {
 			foreach ($element->props->content->entityMap as &$entry) {
 				if ($entry->type === 'LINK') {
