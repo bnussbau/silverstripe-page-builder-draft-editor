@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace zauberfisch\PageBuilderDraftEditor\Element;
 
 use zauberfisch\PageBuilder\Element\Element;
+use zauberfisch\PageBuilder\Form\PageBuilderConfig;
 
 class DraftEditor extends Element {
-	public function getValueForFrontend() {
+	public function getValueForFrontend(PageBuilderConfig $config = null): \stdClass {
 		$element = parent::getValueForFrontend();
 		if (isset($element->props->content->entityMap)) {
 			foreach ($element->props->content->entityMap as &$entry) {
