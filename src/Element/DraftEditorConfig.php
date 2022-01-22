@@ -9,7 +9,8 @@ use zauberfisch\PageBuilder\Element\ElementConfig;
 class DraftEditorConfig extends ElementConfig {
 	protected string $phpClassName = DraftEditor::class;
 
-	public function __construct() {
+	public function __construct(string $elementKeySuffix = "Default") {
+		parent::__construct($elementKeySuffix);
 		$this->config['extraInlineStyles'] = [];
 		$this->config['extraCustomStyleMap'] = [];
 	}
