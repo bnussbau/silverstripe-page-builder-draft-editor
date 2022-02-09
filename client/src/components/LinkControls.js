@@ -6,9 +6,6 @@ import {
 	// useElementPropLinkInsertCallback,
 	ToolbarButtonComponent,
 	ToolbarLinkSelectComponent,
-	ToolbarDropdown,
-	FormDropdownComponent,
-	UnstyledDropdownItemComponent,
 } from "@zauberfisch/pagebuilder"
 
 function RemoveLinkButton({editorState, setEditorState, disabled}) {

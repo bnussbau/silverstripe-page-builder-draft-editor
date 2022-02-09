@@ -472,7 +472,7 @@ function BlockStyleControls(_ref) {
 	    blockTypes = _ref.blockTypes;
 
 	var blockType = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType();
-	var setBlockType = _react2.default.useCallback(function (e, newBlockType) {
+	var setBlockType = _react2.default.useCallback(function (newBlockType, e) {
 		if (blockType !== newBlockType) {
 			setEditorState(function (_editorState) {
 				return _ExtendedRichUtils.ExtendedRichUtils.toggleBlockType(_editorState, newBlockType);

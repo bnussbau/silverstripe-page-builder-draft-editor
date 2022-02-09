@@ -5,7 +5,7 @@ import {ToolbarSelectComponent} from "@zauberfisch/pagebuilder"
 
 export function BlockStyleControls({editorState, setEditorState, blockTypes}) {
 	const blockType = editorState.getCurrentContent().getBlockForKey(editorState.getSelection().getStartKey()).getType()
-	const setBlockType = React.useCallback((e, newBlockType) => {
+	const setBlockType = React.useCallback((newBlockType, e) => {
 		if (blockType !== newBlockType) {
 			setEditorState(_editorState => RichUtils.toggleBlockType(
 				_editorState,
