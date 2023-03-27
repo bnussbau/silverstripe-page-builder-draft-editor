@@ -1,5 +1,5 @@
 import React from "react"
-import {ExtendedRichUtils as RichUtils} from "../ExtendedRichUtils"
+import {ExtendedRichUtils as RichUtils} from "../utility/ExtendedRichUtils"
 // import {ToolbarSelect} from "@zauberfisch/pagebuilder"
 import {ToolbarSelectComponent} from "@zauberfisch/pagebuilder"
 

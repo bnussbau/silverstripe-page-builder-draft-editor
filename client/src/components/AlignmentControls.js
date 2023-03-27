@@ -1,5 +1,5 @@
 import React from "react"
-import {ALIGNMENT_DATA_KEY, ExtendedRichUtils as RichUtils} from "../ExtendedRichUtils"
+import {ALIGNMENT_DATA_KEY, ExtendedRichUtils as RichUtils} from "../utility/ExtendedRichUtils"
 import {ToolbarButtonComponent} from "@zauberfisch/pagebuilder"
 
 export function AlignmentControls({editorState, setEditorState}) {

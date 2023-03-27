@@ -1,5 +1,5 @@
 import React from "react"
-import {ExtendedRichUtils as RichUtils} from "../ExtendedRichUtils"
+import {ExtendedRichUtils as RichUtils} from "../utility/ExtendedRichUtils"
 import {ToolbarButtonComponent} from "@zauberfisch/pagebuilder"
 
 function InlineStyleControlsButton({styleName, setEditorState, active, color, background, activeColor, activeBackground, tooltip, iconLeft, iconRight, children, ...props}) {

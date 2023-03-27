@@ -1,6 +1,5 @@
 import React from "react"
 import {CompositeDecorator, convertToRaw, convertFromRaw, EditorState} from "draft-js"
-import {useNode} from "@craftjs/core"
 import styles from "../DraftEditor.module.scss"
 import {EventBus} from "@zauberfisch/pagebuilder"
 
@@ -33,17 +32,17 @@ const decorator = new CompositeDecorator([
 ])
 
 function createEditorState(initialContent) {
+	console.log({initialContent})
 	return initialContent ? EditorState.createWithContent(convertFromRaw(initialContent), decorator) : EditorState.createEmpty(decorator)
 }
 
-export function useEditorState(initialContent) {
-	const {actions: {setProp}} = useNode()
-	const [editorState, _setEditorState] = React.useState(() => createEditorState(initialContent))
-	const refInitialContent = React.useRef()
-	refInitialContent.current = initialContent
+export function useEditorState(value, changeHandler) {
+	const [editorState, _setEditorState] = React.useState(() => createEditorState(value))
+	const refValue = React.useRef()
+	refValue.current = value
 	React.useEffect(() => {
 		const eventId = EventBus.on("RELOAD_STATE", () => {
-			_setEditorState(createEditorState(refInitialContent.current))
+			_setEditorState(createEditorState(refValue.current))
 		})
 		return () => {
 			EventBus.off("RELOAD_STATE", eventId)
@@ -57,8 +56,7 @@ export function useEditorState(initialContent) {
 			const oldRaw = convertToRaw(oldState.getCurrentContent())
 			const newRaw = convertToRaw(newState.getCurrentContent())
 			if (JSON.stringify(oldRaw) !== JSON.stringify(newRaw)) {
-				// eslint-disable-next-line no-param-reassign
-				setProp((_props) => _props.content = newRaw, 500)
+				changeHandler(newRaw)
 			}
 			return newState
 		})
